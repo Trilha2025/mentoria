@@ -51,7 +51,7 @@ export async function POST(req: Request) {
             const admins = await prisma.user.findMany({ where: { role: 'ADMIN' }, select: { id: true } });
             if (admins.length > 0) {
                 await prisma.notification.createMany({
-                    data: admins.map(admin => ({
+                    data: admins.map((admin: any) => ({
                         userId: admin.id,
                         title: 'Nova Tarefa (Sem Mentor)',
                         message: `${(submission as any).user.name || 'Mentorado'} enviou tarefa ${contentInfo}.`,
