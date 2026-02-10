@@ -47,7 +47,8 @@ export async function GET() {
         });
 
         // Group notes by module
-        const groupedByModule = notes.reduce((acc: any, note) => {
+        // Group notes by module
+        const groupedByModule = notes.reduce((acc: any, note: any) => {
             const moduleId = note.lesson.module.id;
             if (!acc[moduleId]) {
                 acc[moduleId] = {
@@ -57,6 +58,7 @@ export async function GET() {
                     notes: []
                 };
             }
+            // @ts-ignore
             acc[moduleId].notes.push({
                 id: note.id,
                 lessonId: note.lessonId,
