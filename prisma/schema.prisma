@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id             String               @id @default(cuid())
+  email          String               @unique
+  name           String?
+  businessData   Json?
+  role           Role                 @default(MENTEE)
+  lastAccess     DateTime             @updatedAt
+  createdAt      DateTime             @default(now())
+  mentorId       String?
+  avatarUrl      String?
+  submissions    DocumentSubmission[]
+  lessonProgress LessonProgress[]
+  notifications  Notification[]
+  studyPlanItems StudyPlanItem[]
+  supportTickets SupportTicket[]
+  sentMessages   TicketMessage[]
+  mentor         User?                @relation("Mentorship", fields: [mentorId], references: [id])
+  mentees        User[]               @relation("Mentorship")
+  badges         UserBadge[]
+  modulesAccess  UserModuleAccess[]
+  lessonsAccess  UserLessonAccess[]
+  lessonNotes    LessonNote[]
+  plannerItems   PlannerItem[]
+}
+
+model SupportTicket {
+  id        String          @id @default(cuid())
+  userId    String
+  subject   String?
+  status    TicketStatus    @default(OPEN)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  user      User            @relation(fields: [userId], references: [id])
+  messages  TicketMessage[]
+}
+
+model TicketMessage {
+  id            String        @id @default(cuid())
+  ticketId      String
+  senderId      String
+  content       String
+  attachmentUrl String?
+  read          Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  sender        User          @relation(fields: [senderId], references: [id])
+  ticket        SupportTicket @relation(fields: [ticketId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  type      String   @default("INFO")
+  link      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Module {
+  id             String               @id @default(cuid())
+  title          String
+  description    String?
+  order          Int
+  submissions    DocumentSubmission[]
+  lessons        Lesson[]
+  studyPlanItems StudyPlanItem[]
+  accessBy       UserModuleAccess[]
+}
+
+model Lesson {
+  id             String           @id @default(cuid())
+  moduleId       String
+  title          String
+  content        String?
+  videoUrl       String?
+  tasks          String?
+  materialUrl    String?
+  module         Module           @relation(fields: [moduleId], references: [id])
+  progress       LessonProgress[]
+  studyPlanItems StudyPlanItem[]
+  accessBy       UserLessonAccess[]
+  submissions    DocumentSubmission[]
+  lessonNotes    LessonNote[]
+  plannerItems   PlannerItem[]
+}
+
+model UserModuleAccess {
+  id       String       @id @default(cuid())
+  userId   String
+  moduleId String
+  status   AccessStatus @default(LOCKED)
+  module   Module       @relation(fields: [moduleId], references: [id])
+  user     User         @relation(fields: [userId], references: [id])
+
+  @@unique([userId, moduleId])
+}
+
+model UserLessonAccess {
+  id       String       @id @default(cuid())
+  userId   String
+  lessonId String
+  status   AccessStatus @default(LOCKED)
+  lesson   Lesson       @relation(fields: [lessonId], references: [id])
+  user     User         @relation(fields: [userId], references: [id])
+
+  @@unique([userId, lessonId])
+}
+
+model DocumentSubmission {
+  id             String    @id @default(cuid())
+  userId         String
+  moduleId       String
+  lessonId       String?
+  fileUrl        String
+  status         String    @default("PENDING")
+  mentorFeedback String?
+  createdAt      DateTime  @default(now())
+  evaluatedAt    DateTime?
+  feedback       String?
+  updatedAt      DateTime  @default(now()) @updatedAt
+  Module         Module    @relation(fields: [moduleId], references: [id])
+  lesson         Lesson?   @relation(fields: [lessonId], references: [id])
+  user           User      @relation(fields: [userId], references: [id])
+}
+
+model LessonNote {
+  id        String   @id @default(cuid())
+  userId    String
+  lessonId  String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model LessonProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  lessonId  String
+  completed Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+  lesson    Lesson   @relation(fields: [lessonId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, lessonId])
+}
+
+model Badge {
+  id          String      @id @default(cuid())
+  name        String
+  description String
+  icon        String
+  users       UserBadge[]
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+  badge    Badge    @relation(fields: [badgeId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+}
+
+model StudyPlanItem {
+  id       String   @id @default(cuid())
+  userId   String
+  lessonId String
+  moduleId String
+  addedAt  DateTime @default(now())
+  order    Int      @default(0)
+  lesson   Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  module   Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId, moduleId])
+}
+
+enum Role {
+  MENTOR
+  MENTEE
+  ADMIN
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum AccessStatus {
+  LOCKED
+  UNLOCKED
+  COMPLETED
+}
+
+model PlannerItem {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  type        String   @default("STUDY") // STUDY, PERSONAL, WORK, MEETING, LIVE
+  completed   Boolean  @default(false)
+  lessonId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson      Lesson?  @relation(fields: [lessonId], references: [id])
+
+  @@index([userId, startTime])
+}

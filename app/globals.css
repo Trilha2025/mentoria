@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+/* Default (Dark Mode - Trenchy) */
+:root {
+  --background: #19252A;
+  --foreground: #ffffff;
+
+  --trenchy-bg: #19252A;
+  --trenchy-card: #273337;
+  --trenchy-orange: #FF6B00;
+  --trenchy-silver: #DDE8EE;
+
+  --trenchy-text-primary: #ffffff;
+  --trenchy-text-secondary: #DDE8EE;
+  --trenchy-border: rgba(255, 255, 255, 0.05);
+
+  --font-geist-sans: "Inter", sans-serif;
+  --font-geist-mono: "monospace";
+}
+
+/* Light Mode Overrides */
+:root:has(.light),
+.light {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  --trenchy-bg: #f9fafb;
+  --trenchy-card: #ffffff;
+  --trenchy-orange: #ea580c;
+  /* orange-600 */
+  --trenchy-silver: #4b5563;
+  /* gray-600 */
+
+  --trenchy-text-primary: #111827;
+  /* gray-900 */
+  --trenchy-text-secondary: #6b7280;
+  /* gray-500 */
+  --trenchy-border: rgba(0, 0, 0, 0.1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Trenchy Palette Mapped to Vars */
+  --color-trenchy-bg: var(--trenchy-bg);
+  --color-trenchy-card: var(--trenchy-card);
+  --color-trenchy-orange: var(--trenchy-orange);
+  --color-trenchy-silver: var(--trenchy-silver);
+
+  --color-trenchy-text-primary: var(--trenchy-text-primary);
+  --color-trenchy-text-secondary: var(--trenchy-text-secondary);
+  --color-trenchy-border: var(--trenchy-border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
