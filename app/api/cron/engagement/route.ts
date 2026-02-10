@@ -30,7 +30,7 @@ export async function GET() {
             }
         });
 
-        const results = inactiveUsers.map(user => {
+        const results = inactiveUsers.map((user: any) => {
             const currentModule = user.modulesAccess[0]?.module.title || "Início";
             const daysInactive = Math.floor((Date.now() - new Date(user.lastAccess).getTime()) / (1000 * 60 * 60 * 24));
 
