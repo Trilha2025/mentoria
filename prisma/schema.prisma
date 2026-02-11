@@ -196,6 +196,7 @@ enum Role {
   MENTOR
   MENTEE
   ADMIN
+  SUPPORT
 }
 
 enum TicketStatus {

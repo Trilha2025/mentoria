@@ -27,5 +27,14 @@ Este documento descreve as fases planejadas para a evolução da plataforma, foc
 - [ ] **Certificados Automáticos**: Geração de PDF ao concluir a mentoria.
 - [ ] **Pesquisas de NPS**: Avaliação de qualidade por módulo.
 
+## Fase 19: Sistema SAC (Suporte ao Cliente) 🎧
+- [ ] **Nova ROLE `SUPPORT`**: Operadores de SAC com permissões específicas.
+- [ ] **Painel SAC Dedicado**: Interface `/support` para gerenciar tickets.
+- [ ] **Gestão de Status**: Workflow completo (Aberto → Em andamento → Resolvido → Fechado).
+- [ ] **Métricas de Atendimento**: Dashboard com tempo médio, tickets resolvidos, performance.
+- [ ] **Admin Integration**: Criação e gerenciamento de operadores SAC.
+
+> 📋 **Plano detalhado**: Ver [docs/sac-implementation-plan.md](docs/sac-implementation-plan.md)
+
 ---
 *Plano atualizado em: 10/02/2026*

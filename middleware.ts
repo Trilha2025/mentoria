@@ -33,9 +33,10 @@ export async function middleware(request: NextRequest) {
 
     const { data: { session } } = await supabase.auth.getSession()
 
-    // Rotas protegidas (Dashboard e Admin)
+    // Rotas protegidas (Dashboard, Admin, e Support)
     if (request.nextUrl.pathname.startsWith('/dashboard') ||
         request.nextUrl.pathname.startsWith('/admin') ||
+        request.nextUrl.pathname.startsWith('/support') ||
         request.nextUrl.pathname.startsWith('/modulo')
     ) {
         if (!session) {
@@ -50,6 +51,7 @@ export const config = {
     matcher: [
         '/dashboard/:path*',
         '/admin/:path*',
+        '/support/:path*',
         '/modulo/:path*'
     ],
 };
