@@ -60,7 +60,7 @@ export default function NewTicketPage() {
     };
 
     return (
-        <div className="max-w-3xl mx-auto p-6 md:p-8">
+        <div className="max-w-7xl mx-auto p-6 md:p-8 w-full">
             <Link
                 href="/dashboard/support"
                 className="inline-flex items-center gap-2 text-trenchy-text-secondary hover:text-trenchy-orange transition mb-6"

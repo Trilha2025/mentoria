@@ -69,7 +69,7 @@ export default function StudentSupportPage() {
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-6 md:p-8">
+        <div className="max-w-7xl mx-auto p-6 md:p-8 w-full">
             <div className="flex justify-between items-center mb-8">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-trenchy-text-primary flex items-center gap-2">

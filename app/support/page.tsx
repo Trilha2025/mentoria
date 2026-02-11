@@ -116,7 +116,7 @@ export default function SupportPage() {
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-8">
+        <div className="max-w-7xl mx-auto p-8 w-full">
             <header className="mb-8 flex justify-between items-start">
                 <div>
                     <h1 className="text-3xl font-bold text-trenchy-text-primary">Painel SAC</h1>
