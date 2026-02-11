@@ -171,7 +171,7 @@ export default function TicketDetailsPage() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-8">
+        <div className="max-w-7xl mx-auto p-8">
             {/* Header */}
             <div className="mb-6">
                 <Link
@@ -232,7 +232,7 @@ export default function TicketDetailsPage() {
             {/* Messages Thread */}
             <div className="bg-trenchy-card border border-trenchy-border rounded-xl p-6 mb-6">
                 <h3 className="font-bold text-lg text-trenchy-text-primary mb-4">Mensagens</h3>
-                <div className="space-y-4 max-h-[500px] overflow-y-auto mb-6">
+                <div className="space-y-4 h-[600px] overflow-y-auto mb-4 pr-2 custom-scrollbar">
                     {ticket.messages.map((msg) => {
                         const isSupport = msg.sender.role === 'SUPPORT' || msg.sender.role === 'ADMIN' || msg.sender.role === 'MENTOR';
 

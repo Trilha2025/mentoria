@@ -37,8 +37,8 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
-        // Only SUPPORT and ADMIN can access
-        if (dbUser.role !== 'SUPPORT' && dbUser.role !== 'ADMIN') {
+        // Only SUPPORT, ADMIN and MENTOR can access
+        if (dbUser.role !== 'SUPPORT' && dbUser.role !== 'ADMIN' && dbUser.role !== 'MENTOR') {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
@@ -48,9 +48,13 @@ export async function GET(req: Request) {
         const search = searchParams.get('search');
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '20');
+        const category = searchParams.get('category');
 
         // Build where clause
         const whereClause: any = {};
+        if (category) {
+            whereClause.category = category as any;
+        }
         if (status) {
             whereClause.status = status;
         }

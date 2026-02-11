@@ -54,8 +54,10 @@ export default function SupportPage() {
             const params = new URLSearchParams();
             if (filter !== 'ALL') params.append('status', filter);
             if (search) params.append('search', search);
+            params.append('category', 'TECHNICAL'); // Added category filter
 
-            const response = await fetch(`/api/support/tickets?${params}`);
+            // Fetch only TECHNICAL tickets for SAC support
+            const response = await fetch(`/api/support/tickets?${params.toString()}&t=${Date.now()}`, { cache: 'no-store' });
             const data = await response.json();
 
             if (data.success) {

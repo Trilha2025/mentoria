@@ -33,8 +33,8 @@ export default function SupportDashboard() {
     };
 
     const fetchTickets = async () => {
-        // Add timestamp to prevent caching
-        const res = await fetch(`/api/tickets?t=${Date.now()}`, { cache: 'no-store' });
+        // Fetch tickets from Support API (all students) filtered by MENTORSHIP
+        const res = await fetch(`/api/support/tickets?category=MENTORSHIP&t=${Date.now()}`, { cache: 'no-store' });
         const data = await res.json();
         if (data.success) {
             setTickets(data.tickets);

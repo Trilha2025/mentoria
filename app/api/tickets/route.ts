@@ -33,9 +33,15 @@ export async function GET(req: Request) {
         }
 
         const userId = session.user.id;
+        const { searchParams } = new URL(req.url);
+        const category = searchParams.get('category');
+        const where: any = { userId };
+        if (category) {
+            where.category = category as any;
+        }
 
         const tickets = await prisma.supportTicket.findMany({
-            where: { userId },
+            where,
             include: {
                 _count: {
                     select: { messages: true },
@@ -70,7 +76,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, error: 'Não autorizado' }, { status: 401 });
         }
 
-        const { subject, content } = await req.json();
+        const { subject, content, category } = await req.json();
 
         if (!subject || !content) {
             return NextResponse.json({ success: false, error: 'Assunto e mensagem são obrigatórios' }, { status: 400 });
@@ -81,6 +87,7 @@ export async function POST(req: Request) {
                 userId: session.user.id,
                 subject,
                 status: 'OPEN',
+                category: (category || 'TECHNICAL') as any,
                 messages: {
                     create: {
                         senderId: session.user.id,

@@ -23,6 +23,11 @@ export const ChatDrawer = ({ isOpen, onClose, ticketId, userId, role }: ChatDraw
     const fileInputRef = useRef<HTMLInputElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+    // Sync state with prop
+    useEffect(() => {
+        setCurrentTicketId(ticketId);
+    }, [ticketId]);
+
     // Fetch messages when drawer opens or ticket changes
     useEffect(() => {
         if (isOpen) {

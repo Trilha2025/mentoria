@@ -23,7 +23,8 @@ async function createSupabaseClient() {
     );
 }
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     try {
         const supabase = await createSupabaseClient();
         const { data: { session } } = await supabase.auth.getSession();
