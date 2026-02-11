@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeftIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { supabase } from '@/lib/supabase';
+import { ArrowLeftIcon, PaperAirplaneIcon, ArrowLeftStartOnRectangleIcon } from '@heroicons/react/24/outline';
 
 interface Message {
     id: string;
@@ -38,6 +39,11 @@ export default function TicketDetailsPage() {
     const params = useParams();
     const router = useRouter(); // kept for potential future use or consistency
     const ticketId = params.id as string;
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        router.push('/login');
+    };
 
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [loading, setLoading] = useState(true);
@@ -184,7 +190,16 @@ export default function TicketDetailsPage() {
                             Ticket #{ticket.id.slice(0, 8)}
                         </p>
                     </div>
-                    {getStatusBadge(ticket.status)}
+                    <div className="flex items-center gap-4">
+                        {getStatusBadge(ticket.status)}
+                        <button
+                            onClick={handleLogout}
+                            className="bg-red-50 dark:bg-red-900/10 text-red-600 p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 transition"
+                            title="Sair"
+                        >
+                            <ArrowLeftStartOnRectangleIcon className="h-5 w-5" />
+                        </button>
+                    </div>
                 </div>
             </div>
 

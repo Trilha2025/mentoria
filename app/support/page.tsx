@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
+import { MagnifyingGlassIcon, ArrowLeftStartOnRectangleIcon } from '@heroicons/react/24/outline';
 
 interface Ticket {
     id: string;
@@ -26,6 +28,7 @@ interface Ticket {
 }
 
 export default function SupportPage() {
+    const router = useRouter();
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('ALL');
@@ -35,6 +38,11 @@ export default function SupportPage() {
         inProgress: 0,
         resolvedToday: 0,
     });
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        router.push('/login');
+    };
 
     useEffect(() => {
         fetchTickets();
@@ -109,9 +117,19 @@ export default function SupportPage() {
 
     return (
         <div className="max-w-6xl mx-auto p-8">
-            <header className="mb-8">
-                <h1 className="text-3xl font-bold text-trenchy-text-primary">Painel SAC</h1>
-                <p className="text-trenchy-text-secondary mt-2">Gerenciamento de tickets de suporte</p>
+            <header className="mb-8 flex justify-between items-start">
+                <div>
+                    <h1 className="text-3xl font-bold text-trenchy-text-primary">Painel SAC</h1>
+                    <p className="text-trenchy-text-secondary mt-2">Gerenciamento de tickets de suporte</p>
+                </div>
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 dark:bg-red-900/10 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 transition"
+                    title="Sair do sistema"
+                >
+                    <ArrowLeftStartOnRectangleIcon className="h-5 w-5" />
+                    Sair
+                </button>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -148,8 +166,8 @@ export default function SupportPage() {
                                 key={status}
                                 onClick={() => setFilter(status)}
                                 className={`px-4 py-2 rounded-lg font-bold text-sm transition ${filter === status
-                                        ? 'bg-trenchy-orange text-white'
-                                        : 'bg-black/5 dark:bg-white/5 text-trenchy-text-secondary hover:bg-trenchy-orange/10'
+                                    ? 'bg-trenchy-orange text-white'
+                                    : 'bg-black/5 dark:bg-white/5 text-trenchy-text-secondary hover:bg-trenchy-orange/10'
                                     }`}
                             >
                                 {status === 'ALL' ? 'Todos' : status === 'OPEN' ? 'Abertos' : status === 'IN_PROGRESS' ? 'Em andamento' : status === 'RESOLVED' ? 'Resolvidos' : 'Fechados'}

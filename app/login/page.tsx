@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
@@ -8,6 +8,28 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        checkUser();
+    }, []);
+
+    const checkUser = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+            const { data: profile } = await supabase
+                .from('User')
+                .select('role')
+                .eq('email', session.user.email)
+                .single();
+
+            if (profile) {
+                if (profile.role === 'ADMIN') window.location.href = '/admin/team';
+                else if (profile.role === 'MENTOR') window.location.href = '/admin/mentoria';
+                else if (profile.role === 'SUPPORT') window.location.href = '/support';
+                else window.location.href = '/dashboard';
+            }
+        }
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,6 +70,8 @@ export default function LoginPage() {
                             window.location.href = '/admin/team';
                         } else if (profile.role === 'MENTOR') {
                             window.location.href = '/admin/mentoria';
+                        } else if (profile.role === 'SUPPORT') {
+                            window.location.href = '/support';
                         } else {
                             // Mentee
                             window.location.href = '/dashboard';

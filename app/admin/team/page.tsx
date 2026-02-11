@@ -55,9 +55,9 @@ export default function TeamManagementPage() {
 
             if (error) throw error;
             setTeam(data || []);
-        } catch (error) {
-            console.error("Erro ao carregar equipe:", error);
-            alert("Erro ao carregar equipe.");
+        } catch (error: any) {
+            console.error("Erro ao carregar equipe:", JSON.stringify(error, null, 2) || error);
+            alert("Erro ao carregar equipe: " + (error.message || JSON.stringify(error)));
         } finally {
             setLoading(false);
         }
