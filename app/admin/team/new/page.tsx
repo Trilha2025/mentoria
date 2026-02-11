@@ -10,7 +10,7 @@ export default function NewTeamMemberPage() {
     const [newMemberEmail, setNewMemberEmail] = useState('');
     const [newName, setNewName] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [newMemberRole, setNewMemberRole] = useState<'ADMIN' | 'MENTOR'>('MENTOR');
+    const [newMemberRole, setNewMemberRole] = useState<'ADMIN' | 'MENTOR' | 'SUPPORT'>('MENTOR');
     const [inviteLoading, setInviteLoading] = useState(false);
 
     const handleCreateUser = async (e: React.FormEvent) => {
@@ -90,11 +90,12 @@ export default function NewTeamMemberPage() {
                     <label className="block text-sm font-bold mb-1 text-trenchy-text-secondary uppercase tracking-wide">Papel / Permissão</label>
                     <select
                         value={newMemberRole}
-                        onChange={(e) => setNewMemberRole(e.target.value as 'ADMIN' | 'MENTOR')}
+                        onChange={(e) => setNewMemberRole(e.target.value as 'ADMIN' | 'MENTOR' | 'SUPPORT')}
                         className="w-full p-2.5 bg-background border border-trenchy-border rounded-lg text-sm text-trenchy-text-primary focus:border-trenchy-orange focus:ring-1 focus:ring-trenchy-orange outline-none"
                     >
                         <option value="MENTOR">Mentor (Gestão de Alunos)</option>
                         <option value="ADMIN">Administrador (Acesso Total)</option>
+                        <option value="SUPPORT">Suporte (Atendimento SAC)</option>
                     </select>
                 </div>
 

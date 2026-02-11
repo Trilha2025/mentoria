@@ -9,7 +9,7 @@ interface User {
     id: string;
     name: string | null;
     email: string;
-    role: 'ADMIN' | 'MENTOR' | 'MENTEE';
+    role: 'ADMIN' | 'MENTOR' | 'MENTEE' | 'SUPPORT';
 }
 
 export default function TeamManagementPage() {
@@ -50,7 +50,7 @@ export default function TeamManagementPage() {
             const { data, error } = await supabase
                 .from('User')
                 .select('*')
-                .in('role', ['ADMIN', 'MENTOR'])
+                .in('role', ['ADMIN', 'MENTOR', 'SUPPORT'])
                 .order('name');
 
             if (error) throw error;
@@ -63,13 +63,13 @@ export default function TeamManagementPage() {
         }
     };
 
-    const handleRoleChange = (userId: string, newRole: 'ADMIN' | 'MENTOR') => {
+    const handleRoleChange = (userId: string, newRole: 'ADMIN' | 'MENTOR' | 'SUPPORT') => {
         setTeam(prev => prev.map(user =>
             user.id === userId ? { ...user, role: newRole } : user
         ));
     };
 
-    const handleSaveRole = async (userId: string, newRole: 'ADMIN' | 'MENTOR') => {
+    const handleSaveRole = async (userId: string, newRole: 'ADMIN' | 'MENTOR' | 'SUPPORT') => {
         try {
             const { error } = await supabase
                 .from('User')
@@ -128,7 +128,7 @@ export default function TeamManagementPage() {
                         <UserGroupIcon className="h-8 w-8 text-trenchy-orange" />
                         Gestão de Equipe
                     </h1>
-                    <p className="text-trenchy-text-secondary mt-2">Gerencie administradores e mentores da plataforma.</p>
+                    <p className="text-trenchy-text-secondary mt-2">Gerencie administradores, mentores e suporte da plataforma.</p>
                 </div>
                 <Link
                     href="/admin/team/new"
@@ -168,14 +168,20 @@ export default function TeamManagementPage() {
                                         <div className="flex items-center gap-2">
                                             <select
                                                 value={member.role}
-                                                onChange={(e) => handleRoleChange(member.id, e.target.value as 'ADMIN' | 'MENTOR')}
-                                                className={`px-2 py-1 rounded text-xs font-bold border-none focus:ring-0 cursor-pointer ${member.role === 'ADMIN' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300'}`}
+                                                onChange={(e) => handleRoleChange(member.id, e.target.value as 'ADMIN' | 'MENTOR' | 'SUPPORT')}
+                                                className={`px-2 py-1 rounded text-xs font-bold border-none focus:ring-0 cursor-pointer ${member.role === 'ADMIN'
+                                                    ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300'
+                                                    : member.role === 'MENTOR'
+                                                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300'
+                                                        : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                                                    }`}
                                             >
                                                 <option value="ADMIN">ADMIN</option>
                                                 <option value="MENTOR">MENTOR</option>
+                                                <option value="SUPPORT">SUPPORT</option>
                                             </select>
                                             <button
-                                                onClick={() => handleSaveRole(member.id, member.role as 'ADMIN' | 'MENTOR')}
+                                                onClick={() => handleSaveRole(member.id, member.role as 'ADMIN' | 'MENTOR' | 'SUPPORT')}
                                                 className="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 p-1 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition"
                                                 title="Salvar Alteração de Papel"
                                             >
