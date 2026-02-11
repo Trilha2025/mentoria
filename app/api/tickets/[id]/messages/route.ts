@@ -44,6 +44,23 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
         const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
         if (!dbUser) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
+        // Security Check: Verify if user owns ticket or is Staff
+        const ticketOwnerCheck = await prisma.supportTicket.findUnique({
+            where: { id: ticketId },
+            select: { userId: true }
+        });
+
+        if (!ticketOwnerCheck) {
+            return NextResponse.json({ error: 'Ticket not found' }, { status: 404 });
+        }
+
+        const isStaff = ['ADMIN', 'SUPPORT', 'MENTOR'].includes(dbUser.role);
+        const isOwner = ticketOwnerCheck.userId === dbUser.id;
+
+        if (!isStaff && !isOwner) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
         console.log('Creating message for ticket:', ticketId, 'from user:', dbUser.id);
         const message = await prisma.ticketMessage.create({
             data: {

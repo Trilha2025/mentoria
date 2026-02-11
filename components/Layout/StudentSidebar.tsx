@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { HomeIcon, DocumentDuplicateIcon, ArrowLeftOnRectangleIcon, AcademicCapIcon, ChevronDownIcon, ChevronRightIcon, ClipboardDocumentListIcon, BookOpenIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, DocumentDuplicateIcon, ArrowLeftOnRectangleIcon, AcademicCapIcon, ChevronDownIcon, ChevronRightIcon, ClipboardDocumentListIcon, BookOpenIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import { supabase } from '@/lib/supabase';
 import { useEffect, useState } from 'react';
 
@@ -157,7 +157,18 @@ export const StudentSidebar = () => {
                 </div>
             </nav>
 
-            <div className="p-4">
+            <div className="p-4 space-y-2">
+                <Link
+                    href="/dashboard/support"
+                    className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-xl transition-all group ${pathname.includes('/dashboard/support')
+                        ? 'bg-trenchy-orange text-white shadow-lg shadow-orange-900/20'
+                        : 'text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary'
+                        }`}
+                >
+                    <ChatBubbleLeftRightIcon className={`h-5 w-5 mr-3 flex-shrink-0 ${pathname.includes('/dashboard/support') ? 'text-white' : 'text-gray-400 group-hover:text-trenchy-text-primary'}`} />
+                    Suporte
+                </Link>
+
                 <button
                     onClick={handleLogout}
                     className="flex items-center w-full px-4 py-3 text-sm font-medium text-trenchy-text-secondary rounded-xl hover:bg-red-500/10 hover:text-red-400 transition-colors"
