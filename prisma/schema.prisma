@@ -31,6 +31,30 @@ model User {
   lessonsAccess  UserLessonAccess[]
   lessonNotes    LessonNote[]
   plannerItems   PlannerItem[]
+  
+  // Community Relations
+  posts          Post[]
+  comments       Comment[]
+  likes          Like[]
+  
+  communityMember CommunityMember?
+  platformConnections PlatformConnection[]
+}
+
+model PlatformConnection {
+  id             String   @id @default(cuid())
+  userId         String
+  platform       String   // "MERCADOLIVRE" or "SHOPEE"
+  accessToken    String   @db.Text
+  refreshToken   String   @db.Text
+  expiresAt      DateTime
+  externalUserId String?  // ML User ID or Shopee Shop ID
+  settings       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, platform])
 }
 
 model SupportTicket {
@@ -235,4 +259,131 @@ model PlannerItem {
   lesson      Lesson?  @relation(fields: [lessonId], references: [id])
 
   @@index([userId, startTime])
+}
+
+// --- COMMUNITY ACCESS CONTROL ---
+
+enum CommunityRole {
+  MEMBER
+  MODERATOR
+  ADMIN
+}
+
+model CommunityMember {
+  id        String        @id @default(cuid())
+  userId    String        @unique
+  role      CommunityRole @default(MEMBER)
+  
+  joinedAt  DateTime      @default(now())
+  banned    Boolean       @default(false)
+  
+  // Profile fields specific to community
+  bio       String?
+  headline  String?
+  
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+// --- COMMUNITY MODULE ---
+
+enum SpaceType {
+  POST
+  CHAT
+  EVENT
+  COURSE
+  LINK
+// ... existing ...
+
+}
+
+enum SpaceViewStyle {
+  LIST
+  CARD
+  GRID
+}
+
+model SpaceGroup {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  emoji       String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  spaces      Space[]
+}
+
+model Space {
+  id          String         @id @default(cuid())
+  name        String
+  slug        String         @unique
+  description String?
+  emoji       String?
+  coverUrl    String?
+  
+  type        SpaceType      @default(POST)
+  viewStyle   SpaceViewStyle @default(LIST)
+  
+  isPrivate   Boolean        @default(false)
+  order       Int            @default(0)
+  
+  externalLink String?       // URL for LINK type spaces
+  
+  groupId     String
+  group       SpaceGroup     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  posts       Post[]
+  
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   @db.Text
+  isPinned    Boolean  @default(false)
+  
+  spaceId     String
+  space       Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+
+  comments    Comment[]
+  likes       Like[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  content     String   @db.Text
+  
+  postId      String
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  
+  parentId    String?
+  parent      Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies     Comment[] @relation("CommentReplies")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
 }

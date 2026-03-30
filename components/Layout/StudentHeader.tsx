@@ -37,7 +37,7 @@ export const StudentHeader = () => {
         <header className="bg-trenchy-card border-b border-trenchy-border px-6 py-4 flex justify-between items-center sticky top-0 z-50 transition-colors duration-300">
             <div className="flex items-center gap-6">
                 <Link href="/dashboard" className="text-xl font-bold tracking-tight text-trenchy-text-primary">
-                    Mentoria High Ticket
+                    Consultoria & Comunidade
                 </Link>
                 <nav className="hidden md:flex gap-6 items-center">
                     <Link

@@ -26,26 +26,29 @@ export const ActionList = ({ pendingTasks, recentFeedback }: ActionListProps) =>
 
             {/* Recent Feedback Alert */}
             {recentFeedback && (
-                <Link
-                    href={`/modulo/${recentFeedback.moduleId}`}
-                    className="block mb-6 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg p-4 hover:bg-blue-100 dark:hover:bg-blue-900/20 transition cursor-pointer group"
-                >
-                    <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold uppercase tracking-wide text-blue-600 dark:text-blue-400">
-                                Feedback Recente
-                            </span>
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${recentFeedback.status === 'APPROVED' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                {recentFeedback.status === 'APPROVED' ? 'Aprovado' : 'Ajustar'}
-                            </span>
+                <>
+                    <Link
+                        href={`/modulo/${recentFeedback.moduleId}`}
+                        className="block mb-6 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg p-4 hover:bg-blue-100 dark:hover:bg-blue-900/20 transition cursor-pointer group"
+                    >
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold uppercase tracking-wide text-blue-600 dark:text-blue-400">
+                                    Feedback Recente
+                                </span>
+                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${recentFeedback.status === 'APPROVED' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                    {recentFeedback.status === 'APPROVED' ? 'Aprovado' : 'Ajustar'}
+                                </span>
+                            </div>
+                            <div className="text-xs text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                Ver &rarr;
+                            </div>
                         </div>
-                        <div className="text-xs text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                            Ver &rarr;
-                        </div>
-                    </div>
-                    <p className="text-sm font-semibold text-trenchy-text-primary mb-1 group-hover:text-trenchy-orange transition-colors">{recentFeedback.moduleTitle}</p>
-                    <p className="text-sm text-trenchy-text-secondary line-clamp-3 italic">"{recentFeedback.feedback}"</p>
-                </Link>
+                        <p className="text-sm font-semibold text-trenchy-text-primary mb-1 group-hover:text-trenchy-orange transition-colors">{recentFeedback.moduleTitle}</p>
+                        <p className="text-sm text-trenchy-text-secondary line-clamp-3 italic">"{recentFeedback.feedback}"</p>
+                    </Link>
+                    <div className="border-t border-trenchy-border/50 my-6" />
+                </>
             )}
 
             {/* Task List */}
@@ -57,30 +60,32 @@ export const ActionList = ({ pendingTasks, recentFeedback }: ActionListProps) =>
                     </div>
                 ) : (
                     pendingTasks.map((task, idx) => (
-                        <Link
-                            key={idx}
-                            href={`/modulo/${task.moduleId}`}
-                            className="flex items-center justify-between p-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition border border-transparent hover:border-trenchy-border cursor-pointer group"
-                        >
-                            <div className="flex items-center gap-3">
-                                {task.status === 'ADJUST_REQUIRED' ? (
-                                    <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />
-                                ) : (
-                                    <ClockIcon className="h-5 w-5 text-yellow-500" />
-                                )}
-                                <div>
-                                    <p className="text-sm font-bold text-trenchy-text-primary group-hover:text-trenchy-orange transition-colors">
-                                        {task.moduleTitle}
-                                    </p>
-                                    <p className="text-xs text-trenchy-text-secondary">
-                                        {task.status === 'ADJUST_REQUIRED' ? 'Ajuste Solicitado' : 'Aguardando Aprovação'}
-                                    </p>
+                        <div key={idx}>
+                            <Link
+                                href={`/modulo/${task.moduleId}`}
+                                className="flex items-center justify-between p-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition border border-transparent hover:border-trenchy-border cursor-pointer group"
+                            >
+                                <div className="flex items-center gap-3">
+                                    {task.status === 'ADJUST_REQUIRED' ? (
+                                        <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />
+                                    ) : (
+                                        <ClockIcon className="h-5 w-5 text-yellow-500" />
+                                    )}
+                                    <div>
+                                        <p className="text-sm font-bold text-trenchy-text-primary group-hover:text-trenchy-orange transition-colors">
+                                            {task.moduleTitle}
+                                        </p>
+                                        <p className="text-xs text-trenchy-text-secondary">
+                                            {task.status === 'ADJUST_REQUIRED' ? 'Ajuste Solicitado' : 'Aguardando Aprovação'}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="text-xs text-trenchy-text-secondary opacity-0 group-hover:opacity-100 transition-opacity">
-                                Ver &rarr;
-                            </div>
-                        </Link>
+                                <div className="text-xs text-trenchy-text-secondary opacity-0 group-hover:opacity-100 transition-opacity">
+                                    Ver &rarr;
+                                </div>
+                            </Link>
+                            {idx < pendingTasks.length - 1 && <div className="border-t border-trenchy-border/30 my-2" />}
+                        </div>
                     ))
                 )}
             </div>

@@ -13,9 +13,10 @@ interface CreateEventModalProps {
     initialEndDate?: Date;
     eventToEdit?: any;
     initialTitle?: string;
+    lessonId?: string | null;
 }
 
-export const CreateEventModal = ({ isOpen, onClose, onSuccess, initialDate, initialEndDate, eventToEdit, initialTitle }: CreateEventModalProps) => {
+export const CreateEventModal = ({ isOpen, onClose, onSuccess, initialDate, initialEndDate, eventToEdit, initialTitle, lessonId }: CreateEventModalProps) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [type, setType] = useState('STUDY');
@@ -59,7 +60,7 @@ export const CreateEventModal = ({ isOpen, onClose, onSuccess, initialDate, init
                 setType('STUDY');
             }
         }
-    }, [isOpen, initialDate, initialEndDate, eventToEdit]);
+    }, [isOpen, initialDate, initialEndDate, eventToEdit, initialTitle]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -80,7 +81,8 @@ export const CreateEventModal = ({ isOpen, onClose, onSuccess, initialDate, init
                         description,
                         type,
                         startTime: startDateTime.toISOString(),
-                        endTime: endDateTime.toISOString()
+                        endTime: endDateTime.toISOString(),
+                        lessonId: lessonId || eventToEdit.lessonId
                     })
                 });
             } else {
@@ -92,7 +94,8 @@ export const CreateEventModal = ({ isOpen, onClose, onSuccess, initialDate, init
                         description,
                         type,
                         startTime: startDateTime.toISOString(),
-                        endTime: endDateTime.toISOString()
+                        endTime: endDateTime.toISOString(),
+                        lessonId: lessonId
                     })
                 });
             }

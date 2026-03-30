@@ -127,7 +127,15 @@ export async function GET(req: NextRequest) {
         const studyPlanItems = await (prisma as any).studyPlanItem.findMany({
             where: { userId: internalUser.id },
             include: {
-                lesson: true,
+                lesson: {
+                    include: {
+                        plannerItems: {
+                            where: { userId: internalUser.id },
+                            orderBy: { startTime: 'desc' },
+                            take: 1
+                        }
+                    }
+                },
                 module: true
             },
             orderBy: { addedAt: 'desc' }
@@ -154,7 +162,8 @@ export async function GET(req: NextRequest) {
                 title: item.lesson.title,
                 videoUrl: item.lesson.videoUrl,
                 content: item.lesson.content,
-                addedAt: item.addedAt
+                addedAt: item.addedAt,
+                scheduledAt: item.lesson.plannerItems?.[0]?.startTime || null
             });
         });
 

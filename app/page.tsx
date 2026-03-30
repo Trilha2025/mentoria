@@ -7,8 +7,9 @@ export default function Home() {
 
       <div className="max-w-md w-full text-center space-y-8">
         <div>
-          <h1 className="text-4xl font-bold tracking-tighter mb-2">Mentoria High Ticket</h1>
-          <p className="text-gray-600">Acesse sua área exclusiva.</p>
+          <h1 className="text-4xl font-bold tracking-tighter mb-2">Trilha do Ecommerce</h1>
+          <p className="text-gray-600">Consultoria e Comunidade exclusiva.</p>
+Base de conhecimento, ferramentas e networking para escalar seu negócio.
         </div>
 
         <div className="space-y-4">
@@ -21,8 +22,9 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="pt-12 text-xs text-gray-400">
-          <p>&copy; 2024 - Todos os direitos reservados.</p>
+        <div className="pt-12 text-xs text-gray-400 font-medium">
+          <p>A Trilha do Ecommerce</p>
+          <p>&copy; 2026 - Todos os direitos reservados.</p>
         </div>
       </div>
 

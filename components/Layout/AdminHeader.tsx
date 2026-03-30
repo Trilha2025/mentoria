@@ -37,7 +37,7 @@ export const AdminHeader = () => {
         <header className="bg-trenchy-card border-b border-trenchy-border px-8 py-4 flex justify-between items-center sticky top-0 z-50 transition-colors duration-300">
             <div className="flex items-center gap-8">
                 <Link href={role === 'ADMIN' ? "/admin/dashboard" : "/admin/mentoria"} className="text-xl font-bold tracking-tight text-trenchy-text-primary">
-                    {role === 'ADMIN' ? 'Control Room' : 'Mentoria Admin'}
+                    {role === 'ADMIN' ? 'Control Room' : 'Consultoria Admin'}
                 </Link>
 
                 <nav className="hidden md:flex gap-6">

@@ -1,4 +1,4 @@
-# Plataforma de Mentoria High Ticket 🚀
+# Consultoria & Comunidade - Trilha do Ecommerce 🚀
 
 Plataforma completa de gestão de mentorias com sistema de módulos, aulas, submissões, suporte e acompanhamento de progresso.
 

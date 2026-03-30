@@ -39,7 +39,7 @@ interface PlannerItem {
 }
 
 interface PlannerCalendarProps {
-    prefilledEvent?: { title: string } | null;
+    prefilledEvent?: { title: string, lessonId?: string } | null;
 }
 
 const HOURS = Array.from({ length: 18 }, (_, i) => i + 6); // 06:00 to 23:00
@@ -376,6 +376,7 @@ export const PlannerCalendar = ({ prefilledEvent }: PlannerCalendarProps) => {
                     initialEndDate={selectedSlot?.end}
                     eventToEdit={selectedEvent}
                     initialTitle={prefilledTitle}
+                    lessonId={prefilledEvent?.lessonId}
                 />
             )}
         </div>
