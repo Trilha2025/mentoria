@@ -130,13 +130,13 @@ export default function FaturamentoPage() {
             <div className="max-w-7xl mx-auto space-y-8 pb-20">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-trenchy-orange/10 rounded-2xl">
-                            <PresentationChartLineIcon className="h-8 w-8 text-trenchy-orange" />
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-trenchy-orange/10 rounded-xl">
+                            <PresentationChartLineIcon className="h-6 w-6 text-trenchy-orange" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-trenchy-text-primary tracking-tight">Business Intelligence</h1>
-                            <p className="text-trenchy-text-secondary mt-1">Soma geral e desempenho por canal de venda.</p>
+                            <h1 className="text-xl font-bold text-trenchy-text-primary tracking-tight">Vendas & BI</h1>
+                            <p className="text-xs text-trenchy-text-secondary">Desempenho consolidado por canal.</p>
                         </div>
                     </div>
                     
@@ -152,7 +152,7 @@ export default function FaturamentoPage() {
                 </div>
 
                 {/* Tabs Navigation */}
-                <div className="flex p-1.5 bg-black/30 backdrop-blur-md rounded-2xl border border-white/5 w-fit">
+                <div className="flex p-1 bg-black/20 rounded-xl border border-white/5 w-fit">
                     <TabButton 
                         active={activeTab === 'GERAL'} 
                         onClick={() => setActiveTab('GERAL')}
@@ -213,19 +213,19 @@ export default function FaturamentoPage() {
                         </div>
 
                         {/* Chart Area */}
-                        <div className="bg-trenchy-card border border-trenchy-border p-6 rounded-3xl shadow-2xl relative overflow-hidden">
-                            <div className="flex items-center justify-between mb-8">
+                        <div className="bg-trenchy-card border border-trenchy-border p-5 rounded-2xl shadow-sm relative overflow-hidden">
+                            <div className="flex items-center justify-between mb-6">
                                 <div>
-                                    <h3 className="text-xl font-bold text-trenchy-text-primary">Evolução Diária</h3>
-                                    <p className="text-sm text-trenchy-text-secondary mt-1">Comparativo de performance entre plataformas</p>
+                                    <h3 className="text-base font-bold text-trenchy-text-primary">Evolução Diária</h3>
+                                    <p className="text-[10px] text-trenchy-text-secondary mt-0.5 uppercase tracking-wider font-medium">Histórico de faturamento</p>
                                 </div>
-                                <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-wider">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 rounded-full bg-trenchy-orange"></div>
+                                <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest">
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-2 h-2 rounded-full bg-trenchy-orange"></div>
                                         <span className="text-trenchy-text-secondary">ML</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 rounded-full bg-[#EE4D2D]"></div>
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-2 h-2 rounded-full bg-[#EE4D2D]"></div>
                                         <span className="text-trenchy-text-secondary">Shopee</span>
                                     </div>
                                 </div>
@@ -342,13 +342,13 @@ function TabButton({ active, onClick, label, icon: Icon, color = "group-hover:te
     return (
         <button
             onClick={onClick}
-            className={`flex items-center gap-3 px-8 py-3.5 rounded-xl text-sm font-bold transition-all group ${
+            className={`flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-bold transition-all group ${
                 active 
-                ? 'bg-trenchy-card border border-trenchy-border text-white shadow-xl scale-[1.02]' 
-                : `text-trenchy-text-secondary hover:bg-white/5`
+                ? 'bg-trenchy-card border border-white/10 text-white shadow-lg' 
+                : `text-trenchy-text-secondary hover:text-white`
             }`}
         >
-            <Icon className={`h-5 w-5 transition-colors ${active ? activeColor : `text-gray-500 ${color}`}`} />
+            <Icon className={`h-4 w-4 transition-colors ${active ? activeColor : `text-gray-500 ${color}`}`} />
             {label}
         </button>
     );
@@ -356,23 +356,23 @@ function TabButton({ active, onClick, label, icon: Icon, color = "group-hover:te
 
 function MetricCard({ title, value, subValue, icon: Icon, color, trend }: any) {
     return (
-        <div className="bg-trenchy-card border border-trenchy-border p-7 rounded-3xl space-y-4 hover:border-trenchy-orange/40 transition-all group shadow-sm hover:shadow-trenchy-orange/5">
+        <div className="bg-trenchy-card border border-trenchy-border p-5 rounded-2xl space-y-3 hover:border-trenchy-orange/20 transition-all group shadow-sm">
             <div className="flex items-center justify-between">
-                <div className="flex flex-col gap-1">
-                    <span className="text-sm font-bold text-trenchy-text-secondary uppercase tracking-tight">{title}</span>
+                <span className="text-[10px] font-black text-trenchy-text-secondary uppercase tracking-wider">{title}</span>
+                <div className={`p-1.5 bg-white/5 rounded-lg`}>
+                    <Icon className={`h-4 w-4 ${color} opacity-70 group-hover:scale-110 transition-transform`} />
+                </div>
+            </div>
+            <div className="space-y-0.5">
+                <div className="flex items-baseline gap-2">
+                    <h4 className={`text-xl font-black tracking-tight text-trenchy-text-primary ${color}`}>{value}</h4>
                     {trend && (
-                        <span className="text-[10px] font-black text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full w-fit">
+                        <span className="text-[9px] font-black text-green-400 bg-green-400/10 px-1.5 py-0.5 rounded">
                             {trend}
                         </span>
                     )}
                 </div>
-                <div className={`p-2.5 bg-white/5 rounded-xl`}>
-                    <Icon className={`h-6 w-6 ${color} opacity-80 group-hover:scale-110 transition-transform`} />
-                </div>
-            </div>
-            <div className="space-y-1">
-                <h4 className={`text-3xl font-black tracking-tighter text-trenchy-text-primary ${color}`}>{value}</h4>
-                <p className="text-xs text-trenchy-text-secondary/60 font-medium">{subValue}</p>
+                <p className="text-[10px] text-trenchy-text-secondary/40 font-medium">{subValue}</p>
             </div>
         </div>
     );
@@ -380,23 +380,22 @@ function MetricCard({ title, value, subValue, icon: Icon, color, trend }: any) {
 
 function IntegrationCTA({ platform, color, href }: any) {
     return (
-        <div className={`bg-trenchy-card border border-trenchy-border p-10 rounded-3xl flex flex-col lg:flex-row items-center justify-between gap-8 overflow-hidden relative group`}>
-            <div className="relative z-10 flex items-center gap-6 text-center lg:text-left flex-col lg:flex-row">
-                <div className={`p-5 bg-${color}/10 rounded-3xl border border-white/5`}>
-                    <ShoppingCartIcon className={`h-10 w-10 text-${color}`} />
+        <div className={`bg-trenchy-card border border-trenchy-border p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 overflow-hidden relative group`}>
+            <div className="relative z-10 flex items-center gap-4 text-center sm:text-left flex-col sm:flex-row">
+                <div className={`p-3 bg-${color}/10 rounded-xl border border-white/5`}>
+                    <ShoppingCartIcon className={`h-6 w-6 text-${color}`} />
                 </div>
                 <div>
-                    <h3 className="text-2xl font-black text-trenchy-text-primary tracking-tight">Conecte sua conta {platform}</h3>
-                    <p className="text-trenchy-text-secondary mt-1 max-w-md">Importação de dados criptografada e segura para gerar seus relatórios de BI.</p>
+                    <h3 className="text-lg font-bold text-trenchy-text-primary tracking-tight">Conecte sua conta {platform}</h3>
+                    <p className="text-xs text-trenchy-text-secondary mt-0.5">Importação segura de dados para relatórios de BI.</p>
                 </div>
             </div>
             <Link 
                 href={href}
-                className="relative z-10 px-10 py-4 bg-trenchy-orange text-white rounded-xl font-bold hover:scale-105 transition-all shadow-xl shadow-orange-900/40 active:scale-95 text-lg min-w-[200px] text-center"
+                className="relative z-10 px-6 py-2 bg-trenchy-orange text-white rounded-lg font-bold hover:scale-105 transition-all shadow-lg active:scale-95 text-xs min-w-[140px] text-center"
             >
                 Conectar Agora
             </Link>
-            <div className={`absolute -bottom-20 -right-20 w-60 h-60 bg-${color}/5 rounded-full blur-[80px] group-hover:bg-${color}/10 transition-colors`} />
         </div>
     );
 }
