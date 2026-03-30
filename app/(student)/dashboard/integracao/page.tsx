@@ -26,7 +26,7 @@ export default function IntegracaoPage() {
 
     return (
         <main className="flex-1 p-6">
-            <div className="max-w-3xl mx-auto space-y-8">
+            <div className="max-w-7xl mx-auto space-y-8">
                 <div>
                     <h1 className="text-2xl font-bold text-trenchy-text-primary">Integrações</h1>
                     <p className="text-sm text-trenchy-text-secondary mt-1">

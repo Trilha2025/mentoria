@@ -89,19 +89,17 @@ export const StudentSidebar = () => {
             </div>
 
             <nav className="flex-1 px-3 space-y-1 overflow-y-auto mt-4">
-                {navItems.map((item) => {
+                {navItems.map((item, index) => {
                     const isActive = pathname === item.href;
 
-                    if (item.name === 'Comunidade') {
-                        // Subdomain logic handled in a component to avoid hydration mismatch
-                        return (
-                            <CommunityLink key={item.name} item={item} />
-                        );
-                    }
+                    // Insert Modules Accordion as second item
+                    const renderModules = index === 0;
 
-                    return (
+                    const renderItem = (
                         <div key={item.name}>
-                            {item.children ? (
+                            {item.name === 'Comunidade' ? (
+                                <CommunityLink item={item} />
+                            ) : item.children ? (
                                 <div
                                     className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all group mb-1 text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary cursor-default`}
                                 >
@@ -144,67 +142,75 @@ export const StudentSidebar = () => {
                             )}
                         </div>
                     );
+
+                    if (renderModules) {
+                        return (
+                            <div key="group-1">
+                                {renderItem}
+                                <div className="mt-4">
+                                    <button
+                                        onClick={() => setIsModulesOpen(!isModulesOpen)}
+                                        className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary rounded-xl transition-all group mb-2"
+                                    >
+                                        <div className="flex items-center">
+                                            <AcademicCapIcon className="h-5 w-5 mr-3 flex-shrink-0 text-gray-400 group-hover:text-trenchy-text-primary" />
+                                            Módulos
+                                        </div>
+                                        {isModulesOpen ? (
+                                            <ChevronDownIcon className="h-4 w-4" />
+                                        ) : (
+                                            <ChevronRightIcon className="h-4 w-4" />
+                                        )}
+                                    </button>
+
+                                    {isModulesOpen && (
+                                        <div className="ml-4 space-y-1 mt-1 transition-all duration-300">
+                                            {loading ? (
+                                                <div className="px-4 py-2 text-xs text-trenchy-text-secondary">
+                                                    Carregando...
+                                                </div>
+                                            ) : modules.length === 0 ? (
+                                                <div className="px-4 py-2 text-xs text-trenchy-text-secondary">
+                                                    Nenhum módulo disponível
+                                                </div>
+                                            ) : (
+                                                modules.map((module) => {
+                                                    const isModuleActive = pathname.includes(module.id);
+                                                    const isLocked = module.status === 'LOCKED';
+                                                    const isCompleted = module.status === 'COMPLETED';
+
+                                                    return (
+                                                        <Link
+                                                            key={module.id}
+                                                            href={isLocked ? '#' : `/modulo/${module.id}`}
+                                                            className={`flex items-center justify-between px-4 py-2 text-xs rounded-lg transition-all ${isModuleActive
+                                                                ? 'bg-trenchy-orange/10 text-trenchy-orange font-bold'
+                                                                : isLocked
+                                                                    ? 'text-gray-500 cursor-not-allowed opacity-50'
+                                                                    : 'text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary'
+                                                                }`}
+                                                            onClick={(e) => isLocked && e.preventDefault()}
+                                                        >
+                                                            <span className="truncate">{module.title}</span>
+                                                            {isCompleted && (
+                                                                <span className="text-green-500 text-xs ml-2">✓</span>
+                                                            )}
+                                                            {isLocked && (
+                                                                <span className="text-xs ml-2">🔒</span>
+                                                            )}
+                                                        </Link>
+                                                    );
+                                                })
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    return renderItem;
                 })}
-
-                {/* Accordion de Módulos */}
-                <div className="mt-4">
-                    <button
-                        onClick={() => setIsModulesOpen(!isModulesOpen)}
-                        className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary rounded-xl transition-all group mb-2"
-                    >
-                        <div className="flex items-center">
-                            <AcademicCapIcon className="h-5 w-5 mr-3 flex-shrink-0 text-gray-400 group-hover:text-trenchy-text-primary" />
-                            Módulos
-                        </div>
-                        {isModulesOpen ? (
-                            <ChevronDownIcon className="h-4 w-4" />
-                        ) : (
-                            <ChevronRightIcon className="h-4 w-4" />
-                        )}
-                    </button>
-
-                    {isModulesOpen && (
-                        <div className="ml-4 space-y-1 mt-1">
-                            {loading ? (
-                                <div className="px-4 py-2 text-xs text-trenchy-text-secondary">
-                                    Carregando...
-                                </div>
-                            ) : modules.length === 0 ? (
-                                <div className="px-4 py-2 text-xs text-trenchy-text-secondary">
-                                    Nenhum módulo disponível
-                                </div>
-                            ) : (
-                                modules.map((module) => {
-                                    const isModuleActive = pathname.includes(module.id);
-                                    const isLocked = module.status === 'LOCKED';
-                                    const isCompleted = module.status === 'COMPLETED';
-
-                                    return (
-                                        <Link
-                                            key={module.id}
-                                            href={isLocked ? '#' : `/modulo/${module.id}`}
-                                            className={`flex items-center justify-between px-4 py-2 text-xs rounded-lg transition-all ${isModuleActive
-                                                ? 'bg-trenchy-orange/10 text-trenchy-orange font-bold'
-                                                : isLocked
-                                                    ? 'text-gray-500 cursor-not-allowed opacity-50'
-                                                    : 'text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary'
-                                                }`}
-                                            onClick={(e) => isLocked && e.preventDefault()}
-                                        >
-                                            <span className="truncate">{module.title}</span>
-                                            {isCompleted && (
-                                                <span className="text-green-500 text-xs ml-2">✓</span>
-                                            )}
-                                            {isLocked && (
-                                                <span className="text-xs ml-2">🔒</span>
-                                            )}
-                                        </Link>
-                                    );
-                                })
-                            )}
-                        </div>
-                    )}
-                </div>
             </nav>
 
             <div className="p-4 space-y-2">
