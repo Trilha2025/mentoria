@@ -10,7 +10,22 @@ import {
 } from '@heroicons/react/24/outline';
 import { useSearchParams, useRouter } from 'next/navigation';
 
+import { Suspense } from 'react';
+
 export default function ShopeeIntegrationPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+                <ArrowPathIcon className="h-12 w-12 text-trenchy-orange animate-spin" />
+                <p className="text-trenchy-text-secondary text-sm">Carregando integração...</p>
+            </div>
+        }>
+            <ShopeeIntegrationContent />
+        </Suspense>
+    );
+}
+
+function ShopeeIntegrationContent() {
     const [loading, setLoading] = useState(true);
     const [connected, setConnected] = useState(false);
     const [error, setError] = useState<string | null>(null);
