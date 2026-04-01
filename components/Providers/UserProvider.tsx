@@ -30,7 +30,17 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
     const fetchUser = async () => {
         try {
-            const { data: { user: authUser } } = await supabase.auth.getUser();
+            const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+
+            if (authError) {
+                // Ignore AbortErrors or Session missing errors which are common/expected
+                if (
+                    authError.message?.includes('aborted') || 
+                    authError.name === 'AbortError' ||
+                    authError.name === 'AuthSessionMissingError'
+                ) return;
+                console.error('Auth error:', authError);
+            }
 
             if (authUser) {
                 const { data: profile } = await supabase
@@ -47,7 +57,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             } else {
                 setUser(null);
             }
-        } catch (error) {
+        } catch (error: any) {
+            // Silence AbortErrors specifically
+            if (error.name === 'AbortError' || error.message?.includes('aborted')) return;
             console.error('Error fetching user:', error);
         } finally {
             setLoading(false);

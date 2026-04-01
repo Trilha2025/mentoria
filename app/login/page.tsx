@@ -23,10 +23,13 @@ export default function LoginPage() {
                 .single();
 
             if (profile) {
-                if (profile.role === 'ADMIN') window.location.href = '/admin/team';
-                else if (profile.role === 'MENTOR') window.location.href = '/admin/mentoria';
-                else if (profile.role === 'SUPPORT') window.location.href = '/support';
-                else window.location.href = '/dashboard';
+                const isCommunity = window.location.hostname.startsWith('comunidade.') || 
+                                  window.location.hostname.startsWith('community.');
+                
+                if (profile.role === 'ADMIN' && !isCommunity) window.location.href = '/admin/team';
+                else if (profile.role === 'MENTOR' && !isCommunity) window.location.href = '/admin/mentoria';
+                else if (profile.role === 'SUPPORT' && !isCommunity) window.location.href = '/support';
+                else window.location.href = isCommunity ? '/' : '/dashboard';
             }
         }
     };
@@ -65,23 +68,28 @@ export default function LoginPage() {
                         return;
                     }
 
+                    const isCommunity = window.location.hostname.startsWith('comunidade.') || 
+                                      window.location.hostname.startsWith('community.');
+
                     if (profile) {
-                        if (profile.role === 'ADMIN') {
+                        if (profile.role === 'ADMIN' && !isCommunity) {
                             window.location.href = '/admin/team';
-                        } else if (profile.role === 'MENTOR') {
+                        } else if (profile.role === 'MENTOR' && !isCommunity) {
                             window.location.href = '/admin/mentoria';
-                        } else if (profile.role === 'SUPPORT') {
+                        } else if (profile.role === 'SUPPORT' && !isCommunity) {
                             window.location.href = '/support';
                         } else {
-                            // Mentee
-                            window.location.href = '/dashboard';
+                            // Mentee OR anyone on community subdomain
+                            window.location.href = isCommunity ? '/' : '/dashboard';
                         }
                     } else {
-                        window.location.href = '/dashboard';
+                        window.location.href = isCommunity ? '/' : '/dashboard';
                     }
                 } catch (err) {
                     console.error("Erro ao buscar perfil:", err);
-                    window.location.href = '/dashboard';
+                    const isCommunity = window.location.hostname.startsWith('comunidade.') || 
+                                      window.location.hostname.startsWith('community.');
+                    window.location.href = isCommunity ? '/' : '/dashboard';
                 }
             }
         }

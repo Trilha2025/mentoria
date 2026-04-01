@@ -16,6 +16,8 @@ const getCookieDomain = () => {
         return '.atrilhadoecommerce.com.br';
     } else if (hostname.endsWith('.lvh.me')) {
         return '.lvh.me';
+    } else if (hostname.includes('localhost')) {
+        return '.localhost';
     }
     
     return undefined;

@@ -251,13 +251,8 @@ export function CommunitySidebar({ groups, isAdmin }: CommunitySidebarProps) {
                     )}
                 </div>
 
-                {/* Bottom Admin Link (if admin) or User Profile Snippet */}
+                {/* Bottom Profile Snippet or logout could go here */}
                 <div className="p-4">
-                    {/* Temporary Link to main app */}
-                    <Link href="/dashboard" className="flex items-center gap-2 text-xs text-trenchy-text-secondary hover:text-trenchy-orange transition-colors">
-                        <ArrowLeftIcon className="w-3 h-3" />
-                        Voltar para Plataforma
-                    </Link>
                 </div>
             </div>
 

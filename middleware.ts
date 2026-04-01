@@ -33,9 +33,9 @@ export async function middleware(request: NextRequest) {
                             domain = '.atrilhadoecommerce.com.br';
                         } else if (hostname.endsWith('.lvh.me') || hostname.includes('.lvh.me:')) {
                             domain = '.lvh.me';
+                        } else if (hostname.includes('localhost')) {
+                            domain = '.localhost';
                         }
-                        // On localhost, we skip explicit domain to let browser use default sub-subdomain isolation 
-                        // or shared loopback if configured. 
 
                         response.cookies.set(name, value, {
                             ...options,
