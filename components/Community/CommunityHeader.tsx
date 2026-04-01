@@ -33,12 +33,12 @@ export function CommunityHeader({ user }: CommunityHeaderProps) {
                         <p className="text-sm font-bold text-trenchy-text-primary group-hover:text-trenchy-orange transition-colors">
                             {user?.name || 'Usuário'}
                         </p>
-                        <p className="text-[10px] text-trenchy-text-secondary">
-                            {user?.email || 'carregando...'}
+                        <p className="text-[10px] text-trenchy-text-secondary uppercase font-medium">
+                            Meu Perfil
                         </p>
                     </div>
-                    {/* Avatar with White Border */}
-                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-trenchy-border lg:border-white overflow-hidden bg-trenchy-bg shadow-sm group-hover:scale-105 transition-transform duration-200">
+                    {/* Avatar with White Border & Hover Overlay */}
+                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-trenchy-border lg:border-white overflow-hidden bg-trenchy-bg shadow-sm relative group-hover:scale-105 transition-all duration-200">
                         {user?.avatarUrl ? (
                             <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
                         ) : (
@@ -46,6 +46,11 @@ export function CommunityHeader({ user }: CommunityHeaderProps) {
                                 {user?.name?.charAt(0).toUpperCase() || <UserIcon className="w-5 h-5" />}
                             </div>
                         )}
+                        {/* Hover Overlay: Editar Dados */}
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-[8px] text-white font-bold uppercase text-center leading-tight">
+                            <span>Editar</span>
+                            <span>Dados</span>
+                        </div>
                     </div>
                 </Link>
 
