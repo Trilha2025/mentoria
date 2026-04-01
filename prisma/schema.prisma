@@ -14,9 +14,11 @@ model User {
   name           String?
   businessData   Json?
   role           Role                 @default(MENTEE)
+  accessType     AccessType           @default(COMMUNITY)
   lastAccess     DateTime             @updatedAt
   createdAt      DateTime             @default(now())
   mentorId       String?
+  employerId     String?
   avatarUrl      String?
   submissions    DocumentSubmission[]
   lessonProgress LessonProgress[]
@@ -26,6 +28,8 @@ model User {
   sentMessages   TicketMessage[]
   mentor         User?                @relation("Mentorship", fields: [mentorId], references: [id])
   mentees        User[]               @relation("Mentorship")
+  employer       User?                @relation("Enterprise", fields: [employerId], references: [id])
+  employees      User[]               @relation("Enterprise")
   badges         UserBadge[]
   modulesAccess  UserModuleAccess[]
   lessonsAccess  UserLessonAccess[]
@@ -222,6 +226,11 @@ enum Role {
   MENTEE
   ADMIN
   SUPPORT
+}
+
+enum AccessType {
+  COMMUNITY
+  CONSULTING
 }
 
 enum TicketStatus {

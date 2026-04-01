@@ -7,6 +7,7 @@ import { SunIcon, MoonIcon, Bars3Icon } from '@heroicons/react/24/outline'; // A
 
 export const StudentHeader = () => {
     const [isAdminOrMentor, setIsAdminOrMentor] = useState(false);
+    const [isConsulting, setIsConsulting] = useState(false);
     const { theme, toggleTheme } = useTheme();
 
     useEffect(() => {
@@ -18,12 +19,15 @@ export const StudentHeader = () => {
         if (user) {
             const { data } = await supabase
                 .from('User')
-                .select('role')
-                .eq('email', user.email)
+                .select('role, accessType')
+                .eq('id', user.id)
                 .single();
 
             if (data?.role === 'ADMIN' || data?.role === 'MENTOR') {
                 setIsAdminOrMentor(true);
+            }
+            if (data?.accessType === 'CONSULTING') {
+                setIsConsulting(true);
             }
         }
     };
@@ -46,6 +50,14 @@ export const StudentHeader = () => {
                     >
                         Minha Trilha
                     </Link>
+                    {isConsulting && (
+                        <Link
+                            href="/minha-equipe"
+                            className="text-sm font-medium text-trenchy-text-primary hover:text-trenchy-text-secondary transition"
+                        >
+                            Minha Equipe
+                        </Link>
+                    )}
                     {isAdminOrMentor && (
                         <Link
                             href="/admin/mentoria"

@@ -17,7 +17,8 @@ import {
 
 import {
     Bars3Icon as Bars3OutlineIcon,
-    PencilSquareIcon as PencilSquareOutlineIcon
+    PencilSquareIcon as PencilSquareOutlineIcon,
+    LockClosedIcon
 } from '@heroicons/react/24/outline';
 
 export default function LessonPage({ params }: { params: Promise<{ id: string }> }) {
@@ -41,34 +42,33 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 }
                 setUserId(user.id);
 
-                // 1. Fetch Module Info & Module Access
-                const [modRes, modAccRes] = await Promise.all([
+                // 1. Fetch Module Info, Module Access, and User Access Level
+                const [modRes, modAccRes, userProfileRes] = await Promise.all([
                     supabase.from('Module').select('*').eq('id', id).single(),
-                    supabase.from('UserModuleAccess').select('status').eq('userId', user.id).eq('moduleId', id).maybeSingle()
+                    supabase.from('UserModuleAccess').select('status').eq('userId', user.id).eq('moduleId', id).maybeSingle(),
+                    supabase.from('User').select('role, accessType').eq('id', user.id).single()
                 ]);
 
                 if (modRes.error) throw modRes.error;
                 const mod = modRes.data;
-                const isModuleUnlocked = modAccRes.data?.status === 'UNLOCKED' || modAccRes.data?.status === 'COMPLETED';
+                const profile = userProfileRes.data;
 
-                console.log('Access Debug:', {
-                    moduleId: id,
-                    moduleTitle: mod?.title,
-                    isModuleUnlocked,
-                    moduleStatus: modAccRes.data?.status,
-                    hasModuleAccError: !!modAccRes.error
-                });
+                // REDIRECT: Se for apenas comunidade, não acessa o portal de mentoria
+                if (profile?.accessType === 'COMMUNITY' && profile?.role === 'MENTEE') {
+                    window.location.href = 'https://comunidade.atrilhadoecommerce.com.br';
+                    return;
+                }
+
+                let isModuleUnlocked = modAccRes.data?.status === 'UNLOCKED' || modAccRes.data?.status === 'COMPLETED';
 
                 if (mod) {
                     setModuleData(mod);
 
                     // 2. Fetch Lesson Accesses for this user
-                    const { data: lessonAccesses, error: lessonAccError } = await supabase
+                    const { data: lessonAccesses } = await supabase
                         .from('UserLessonAccess')
                         .select('lessonId, status')
                         .eq('userId', user.id);
-
-                    if (lessonAccError) console.error('Lesson Access Fetch Error:', lessonAccError);
 
                     // 3. Fetch Lessons for this Module
                     const { data: fetchedLessons, error: lessonsError } = await supabase
@@ -80,60 +80,32 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     if (lessonsError) throw lessonsError;
 
                     if (fetchedLessons && fetchedLessons.length > 0) {
-                        // Filter based on access rules:
-                        // (Module Unlocked AND Lesson NOT explicitly Locked) OR Lesson explicitly Unlocked
-                        const visibleLessons = fetchedLessons.filter(lesson => {
+                        // Filter and Map Access
+                        const visibleLessons = fetchedLessons.map((lesson, idx) => {
                             const lAcc = lessonAccesses?.find(a => a.lessonId === lesson.id);
-                            if (lAcc?.status === 'UNLOCKED' || lAcc?.status === 'COMPLETED') return true;
-                            if (lAcc?.status === 'LOCKED') return false;
-                            return isModuleUnlocked; // Default to module state
+                            let hasAccess = false;
+
+                            if (lAcc?.status === 'UNLOCKED' || lAcc?.status === 'COMPLETED') {
+                                hasAccess = true;
+                            } else if (lAcc?.status === 'LOCKED') {
+                                hasAccess = false;
+                            } else {
+                                hasAccess = isModuleUnlocked;
+                            }
+
+                            return { ...lesson, isLocked: !hasAccess };
                         });
 
-                        console.log('Visible Lessons Count:', visibleLessons.length);
-
-                        if (visibleLessons.length === 0) {
-                            alert("Você não tem acesso a nenhuma aula deste módulo no momento.");
-                            window.location.href = '/dashboard';
-                            return;
-                        }
-
-                        let lessonsWithProgress = [...visibleLessons];
-
-                        // 4. Fetch Status for ALL lessons in this module
-                        const { data: progressList } = await supabase
-                            .from('LessonProgress')
-                            .select('lessonId, completed')
-                            .eq('userId', user.id)
-                            .in('lessonId', visibleLessons.map(l => l.id));
-
-                        // Merge progress
-                        if (progressList) {
-                            lessonsWithProgress = lessonsWithProgress.map(lesson => {
-                                const prog = progressList.find(p => p.lessonId === lesson.id);
-                                return { ...lesson, completed: prog?.completed || false };
-                            });
-                        }
-
-                        setLessons(lessonsWithProgress);
+                        setLessons(visibleLessons);
 
                         // Default to first lesson if none active
                         if (!activeLesson) {
-                            setActiveLesson(lessonsWithProgress[0]);
-                        } else {
-                            // Refresh active lesson data
-                            const current = lessonsWithProgress.find(l => l.id === activeLesson.id);
-                            if (current) setActiveLesson(current);
-                            else setActiveLesson(lessonsWithProgress[0]);
+                            setActiveLesson(visibleLessons[0]);
                         }
-                    } else {
-                        alert("Este módulo ainda não possui aulas cadastradas.");
-                        window.location.href = '/dashboard';
-                        return;
                     }
                 }
             } catch (error) {
                 console.error("Erro ao carregar dados da aula:", error);
-                alert("Ocorreu um erro ao carregar os dados. Por favor, tente novamente.");
                 window.location.href = '/dashboard';
             } finally {
                 setLoading(false);
@@ -327,11 +299,12 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                                             <button
                                                 key={lesson.id}
                                                 onClick={() => {
+                                                    if (lesson.isLocked) return;
                                                     setActiveLesson(lesson);
                                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                                 }}
                                                 className={`w-full text-left p-4 hover:bg-white/5 transition flex items-start gap-3 border-b border-trenchy-border/50 last:border-0 relative group ${isActive ? 'bg-white/5' : ''
-                                                    }`}
+                                                    } ${lesson.isLocked ? 'opacity-60 grayscale-[0.5]' : ''}`}
                                             >
                                                 {/* Active Indicator */}
                                                 {isActive && (
@@ -340,7 +313,9 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
                                                 {/* Status Icon */}
                                                 <div className="mt-0.5 shrink-0">
-                                                    {lesson.completed ? (
+                                                    {lesson.isLocked ? (
+                                                        <LockClosedIcon className="h-5 w-5 text-trenchy-text-secondary/40" />
+                                                    ) : lesson.completed ? (
                                                         <CheckCircleIcon className="h-5 w-5 text-green-500" />
                                                     ) : (
                                                         isActive ? (
@@ -379,7 +354,6 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     </div>
 
                 </div>
-
             </div>
         </div>
     );

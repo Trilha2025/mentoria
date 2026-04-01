@@ -52,12 +52,18 @@ export default function DashboardPage() {
                 return;
             }
 
-            // 2. Busca dados do perfil (Nome)
+            // 2. Busca dados do perfil (Nome, Cargo e Tipo de Acesso)
             const { data: profile } = await supabase
                 .from('User')
-                .select('name')
+                .select('name, role, accessType')
                 .eq('id', user.id)
                 .single();
+
+            // REDIRECT: Se for apenas comunidade, não acessa o portal de mentoria
+            if (profile?.accessType === 'COMMUNITY' && profile?.role === 'MENTEE') {
+                window.location.href = 'https://comunidade.atrilhadoecommerce.com.br';
+                return;
+            }
 
             if (profile) {
                 setUserName(profile.name || 'Mentorado');
@@ -79,7 +85,9 @@ export default function DashboardPage() {
             const modAccData = modulesRes.data || [];
             const lesAccData = lessonAccessRes.data || [];
 
-            // Merge unique modules from both sources
+            let allModules: any[] = [];
+            
+            // Standard Logic for Mentoria Members
             const modulesMap = new Map<string, any>();
 
             // 1. Process Module Access
@@ -94,22 +102,22 @@ export default function DashboardPage() {
                 }
             });
 
-            // 2. Process Lesson Access (Add modules that might not be in UserModuleAccess)
+            // 2. Process Lesson Access
             lesAccData.forEach((item: any) => {
                 const moduleId = item.lesson?.moduleId;
                 if (moduleId && !modulesMap.has(moduleId) && item.lesson?.Module) {
                     modulesMap.set(moduleId, {
                         id: `la-${moduleId}`,
-                        status: 'UNLOCKED', // If at least one lesson is unlocked, show module as unlocked
+                        status: 'UNLOCKED',
                         moduleId: moduleId,
                         module: item.lesson.Module
                     });
                 }
             });
 
-            const allModules = Array.from(modulesMap.values());
-            const sorted = allModules.sort((a, b) => (a.module.order || 0) - (b.module.order || 0));
+            allModules = Array.from(modulesMap.values());
 
+            const sorted = allModules.sort((a, b) => (a.module.order || 0) - (b.module.order || 0));
             setModules(sorted);
 
             // Determinar Módulo Atual (V2 Logic)
@@ -171,8 +179,7 @@ export default function DashboardPage() {
 
     return (
         <main className="max-w-7xl mx-auto p-6 md:p-8 w-full">
-
-            {/* V2: Hero Section & Action List */}
+            
             {modules.length > 0 && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
                     <div className="lg:col-span-2">
