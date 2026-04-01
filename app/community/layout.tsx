@@ -21,9 +21,10 @@ export default async function CommunityLayout({ children }: { children: React.Re
     const { data: { user } } = await supabase.auth.getUser();
     let isCommunityAdmin = false;
     let communityProfile = null;
+    let dbUser = null;
 
     if (user?.email) {
-        const dbUser = await prisma.user.findUnique({
+        dbUser = await prisma.user.findUnique({
             where: { email: user.email },
             include: { communityMember: true }
         });
@@ -66,7 +67,7 @@ export default async function CommunityLayout({ children }: { children: React.Re
 
             {/* Main Content Area */}
             <main className="flex-1 min-w-0 flex flex-col">
-                <CommunityHeader />
+                <CommunityHeader user={dbUser} />
                 <div className="p-4 md:p-6 block">
                     {children}
                 </div>
