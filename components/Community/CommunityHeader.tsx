@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, User as UserIcon } from "lucide-react";
-import { BellIcon, SunIcon, MoonIcon } from "@heroicons/react/24/outline";
+import { BellIcon, SunIcon, MoonIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useTheme } from "@/components/Providers/ThemeProvider";
 
@@ -26,19 +26,23 @@ export function CommunityHeader({ user }: CommunityHeaderProps) {
             </div>
 
             {/* Right Actions - Reconstructed per Reference Image */}
-            <div className="flex items-center gap-2 md:gap-5">
-                {/* Profile Section */}
-                <Link href="/perfil" className="flex items-center gap-3 group">
-                    <div className="hidden md:block text-right">
-                        <p className="text-sm font-bold text-trenchy-text-primary group-hover:text-trenchy-orange transition-colors">
+            <div className="flex items-center gap-4">
+                {/* Profile Section with Hover Dropdown */}
+                <div className="relative group flex items-center gap-4">
+                    {/* Left Divider */}
+                    <div className="h-10 w-[1px] bg-trenchy-border mx-1" />
+                    
+                    <div className="text-right hidden sm:block">
+                        <p className="text-sm font-bold text-trenchy-text-primary">
                             {user?.name || 'Usuário'}
                         </p>
-                        <p className="text-[10px] text-trenchy-text-secondary uppercase font-medium">
+                        <p className="text-[10px] text-trenchy-text-secondary uppercase">
                             Meu Perfil
                         </p>
                     </div>
-                    {/* Avatar with White Border & Hover Overlay */}
-                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-trenchy-border lg:border-white overflow-hidden bg-trenchy-bg shadow-sm relative group-hover:scale-105 transition-all duration-200">
+
+                    {/* Avatar with White Border */}
+                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-trenchy-border lg:border-white overflow-hidden bg-trenchy-bg shadow-sm transition-transform duration-200">
                         {user?.avatarUrl ? (
                             <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
                         ) : (
@@ -46,13 +50,19 @@ export function CommunityHeader({ user }: CommunityHeaderProps) {
                                 {user?.name?.charAt(0).toUpperCase() || <UserIcon className="w-5 h-5" />}
                             </div>
                         )}
-                        {/* Hover Overlay: Editar Dados */}
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-[8px] text-white font-bold uppercase text-center leading-tight">
-                            <span>Editar</span>
-                            <span>Dados</span>
-                        </div>
                     </div>
-                </Link>
+
+                    {/* New Dropdown (Screenshot match) */}
+                    <div className="absolute top-full right-0 mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <Link 
+                            href="/perfil" 
+                            className="flex items-center gap-2 bg-[#1e292d] border border-white/10 rounded-xl px-5 py-4 min-w-[180px] shadow-2xl hover:bg-[#2a373c] transition-colors"
+                        >
+                            <Cog6ToothIcon className="w-5 h-5 text-white/70" />
+                            <span className="text-sm font-medium text-white">Editar Dados</span>
+                        </Link>
+                    </div>
+                </div>
 
                 {/* Vertical Divider */}
                 <div className="h-8 w-[1px] bg-trenchy-border mx-1" />

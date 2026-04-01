@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useEffect, useState } from 'react';
 import { useTheme } from '@/components/Providers/ThemeProvider';
-import { SunIcon, MoonIcon, Bars3Icon } from '@heroicons/react/24/outline'; // Adicionei Bars3 se precisar, ou mantive layout
+import { SunIcon, MoonIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'; // Adicionei Cog6ToothIcon
 
 export const StudentHeader = () => {
     const [isAdminOrMentor, setIsAdminOrMentor] = useState(false);
@@ -77,16 +77,23 @@ export const StudentHeader = () => {
                 </nav>
             </div>
 
-            <div className="flex items-center gap-2 md:gap-5">
-                <Link href="/perfil" className="flex items-center gap-3 group">
+            <div className="flex items-center gap-4">
+                {/* Profile Section with Hover Dropdown */}
+                <div className="relative group flex items-center gap-4">
+                    {/* Left Divider */}
+                    <div className="h-10 w-[1px] bg-trenchy-border mx-1" />
+                    
                     <div className="text-right hidden sm:block">
-                        <p className="text-sm font-bold text-trenchy-text-primary group-hover:text-trenchy-orange transition-colors">
+                        <p className="text-sm font-bold text-trenchy-text-primary">
                             {userName}
                         </p>
-                        <p className="text-[10px] text-trenchy-text-secondary uppercase">Meu Perfil</p>
+                        <p className="text-[10px] text-trenchy-text-secondary uppercase">
+                            Meu Perfil
+                        </p>
                     </div>
-                    {/* Avatar with White Border & Hover Overlay */}
-                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-trenchy-border lg:border-white overflow-hidden bg-trenchy-bg shadow-sm relative group-hover:scale-105 transition-all duration-200">
+
+                    {/* Avatar with White Border */}
+                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-trenchy-border lg:border-white overflow-hidden bg-trenchy-bg shadow-sm transition-transform duration-200">
                         {avatarUrl ? (
                             <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
                         ) : (
@@ -94,34 +101,42 @@ export const StudentHeader = () => {
                                 {userName.charAt(0).toUpperCase()}
                             </div>
                         )}
-                        {/* Hover Overlay: Editar Dados */}
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-[8px] text-white font-bold uppercase text-center leading-tight">
-                            <span>Editar</span>
-                            <span>Dados</span>
-                        </div>
                     </div>
-                </Link>
+
+                    {/* New Dropdown (Screenshot match) */}
+                    <div className="absolute top-full right-0 mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <Link 
+                            href="/perfil" 
+                            className="flex items-center gap-2 bg-[#1e292d] border border-white/10 rounded-xl px-5 py-4 min-w-[180px] shadow-2xl hover:bg-[#2a373c] transition-colors"
+                        >
+                            <Cog6ToothIcon className="w-5 h-5 text-white/70" />
+                            <span className="text-sm font-medium text-white">Editar Dados</span>
+                        </Link>
+                    </div>
+                </div>
 
                 {/* Vertical Divider */}
                 <div className="h-8 w-[1px] bg-trenchy-border mx-1" />
 
-                <button
-                    onClick={toggleTheme}
-                    className="p-2 text-trenchy-text-secondary hover:text-trenchy-text-primary transition rounded-full hover:bg-black/5 dark:hover:bg-white/5"
-                    title={theme === 'dark' ? "Mudar para Modo Claro" : "Mudar para Modo Escuro"}
-                >
-                    {theme === 'dark' ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
-                </button>
+                <div className="flex items-center gap-1">
+                    <button
+                        onClick={toggleTheme}
+                        className="p-2 text-trenchy-text-secondary hover:text-trenchy-text-primary transition rounded-full hover:bg-black/5 dark:hover:bg-white/5"
+                        title={theme === 'dark' ? "Mudar para Modo Claro" : "Mudar para Modo Escuro"}
+                    >
+                        {theme === 'dark' ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+                    </button>
 
-                <button
-                    onClick={handleLogout}
-                    className="p-2 text-trenchy-text-secondary hover:text-red-500 transition"
-                    title="Sair"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-                    </svg>
-                </button>
+                    <button
+                        onClick={handleLogout}
+                        className="p-2 text-trenchy-text-secondary hover:text-red-500 transition"
+                        title="Sair"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </header>
     );
