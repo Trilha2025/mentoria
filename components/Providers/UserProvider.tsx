@@ -9,6 +9,7 @@ interface UserData {
     name?: string;
     role?: string;
     avatarUrl?: string;
+    accessType?: string;
 }
 
 interface UserContextType {
@@ -34,7 +35,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             if (authUser) {
                 const { data: profile } = await supabase
                     .from('User')
-                    .select('id, name, email, role, avatarUrl')
+                    .select('id, name, email, role, avatarUrl, accessType')
                     .eq('id', authUser.id)
                     .single();
 
