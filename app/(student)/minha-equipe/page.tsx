@@ -10,7 +10,6 @@ import {
     ShieldCheckIcon,
     IdentificationIcon
 } from '@heroicons/react/24/outline';
-import { UpgradeModal } from '@/components/Shared/UpgradeModal';
 
 export default function MyTeamPage() {
     const [ownerId, setOwnerId] = useState<string | null>(null);
