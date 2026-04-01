@@ -103,14 +103,14 @@ export const StudentHeader = () => {
                         )}
                     </div>
 
-                    {/* New Dropdown (Screenshot match) */}
+                    {/* New Dropdown (Theme aware) */}
                     <div className="absolute top-full right-0 mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                         <Link 
                             href="/perfil" 
-                            className="flex items-center gap-2 bg-[#1e292d] border border-white/10 rounded-xl px-5 py-4 min-w-[180px] shadow-2xl hover:bg-[#2a373c] transition-colors"
+                            className="flex items-center gap-3 bg-white dark:bg-[#1e292d] border border-black/5 dark:border-white/10 rounded-xl px-5 py-4 min-w-[200px] shadow-2xl hover:bg-gray-50 dark:hover:bg-[#2a373c] transition-colors group/item"
                         >
-                            <Cog6ToothIcon className="w-5 h-5 text-white/70" />
-                            <span className="text-sm font-medium text-white">Editar Dados</span>
+                            <Cog6ToothIcon className="w-5 h-5 text-trenchy-text-secondary group-hover/item:text-trenchy-orange transition-colors" />
+                            <span className="text-sm font-bold text-trenchy-text-primary">Editar Dados</span>
                         </Link>
                     </div>
                 </div>
