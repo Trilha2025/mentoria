@@ -30,7 +30,8 @@ export async function GET(req: Request) {
                 name: true,
                 email: true,
                 avatarUrl: true,
-                role: true
+                role: true,
+                accessType: true
             }
         });
 
@@ -48,7 +49,7 @@ export async function GET(req: Request) {
 
 export async function PATCH(req: Request) {
     try {
-        const { name, avatarUrl } = await req.json();
+        const { name, avatarUrl, accessType } = await req.json();
 
         const cookieStore = await cookies();
         const supabase = createServerClient(
@@ -72,7 +73,8 @@ export async function PATCH(req: Request) {
             where: { email: user.email },
             data: {
                 name: name !== undefined ? name : undefined,
-                avatarUrl: avatarUrl !== undefined ? avatarUrl : undefined
+                avatarUrl: avatarUrl !== undefined ? avatarUrl : undefined,
+                accessType: accessType !== undefined ? accessType : undefined
             }
         });
 
@@ -89,7 +91,16 @@ export async function PATCH(req: Request) {
         return NextResponse.json({ success: true, user: updatedUser });
 
     } catch (error: any) {
-        console.error("Profile PATCH Error:", error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        console.error("Profile PATCH Error Details:", {
+            message: error.message,
+            stack: error.stack,
+            name: error.name,
+            code: error.code // For Prisma errors
+        });
+        return NextResponse.json({ 
+            success: false, 
+            error: error.message,
+            debug: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+        }, { status: 500 });
     }
 }

@@ -3,6 +3,7 @@ import { CommunitySidebar } from "@/components/Community/CommunitySidebar";
 import { CommunityHeader } from "@/components/Community/CommunityHeader";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 // Layout for /app/community
 export default async function CommunityLayout({ children }: { children: React.ReactNode }) {
@@ -18,7 +19,12 @@ export default async function CommunityLayout({ children }: { children: React.Re
         }
     );
 
-    const { data: { user } } = await supabase.auth.getUser();
+    // Standard Auth Check
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user || !user.email) {
+        redirect("/login");
+    }
     let isCommunityAdmin = false;
     let communityProfile = null;
     let dbUser = null;

@@ -6,18 +6,27 @@ import { createBrowserClient } from '@supabase/ssr';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
+const getCookieDomain = () => {
+    if (typeof window === 'undefined') return undefined;
+    
+    const hostname = window.location.hostname;
+    const isProd = process.env.NODE_ENV === 'production';
+    
+    if (isProd) {
+        return '.atrilhadoecommerce.com.br';
+    } else if (hostname.endsWith('.lvh.me')) {
+        return '.lvh.me';
+    }
+    
+    return undefined;
+};
+
 export const supabase = createBrowserClient(
     supabaseUrl,
     supabaseAnonKey,
     {
         cookieOptions: {
-            domain: process.env.NODE_ENV === 'production'
-                ? '.atrilhadoecommerce.com.br'
-                : typeof window !== 'undefined' && window.location.hostname.includes('localhost')
-                    ? 'localhost'
-                    : typeof window !== 'undefined' && window.location.hostname.endsWith('.lvh.me')
-                        ? '.lvh.me'
-                        : undefined,
+            domain: getCookieDomain(),
             sameSite: 'lax',
             secure: process.env.NODE_ENV === 'production',
         }

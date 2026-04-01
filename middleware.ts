@@ -23,20 +23,27 @@ export async function middleware(request: NextRequest) {
                             headers: request.headers,
                         },
                     })
-                    cookiesToSet.forEach(({ name, value, options }) =>
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        const hostname = request.headers.get('host') || '';
+                        const isProd = process.env.NODE_ENV === 'production';
+                        
+                        // Domain sharing logic
+                        let domain = undefined;
+                        if (isProd) {
+                            domain = '.atrilhadoecommerce.com.br';
+                        } else if (hostname.endsWith('.lvh.me') || hostname.includes('.lvh.me:')) {
+                            domain = '.lvh.me';
+                        }
+                        // On localhost, we skip explicit domain to let browser use default sub-subdomain isolation 
+                        // or shared loopback if configured. 
+
                         response.cookies.set(name, value, {
                             ...options,
-                            domain: process.env.NODE_ENV === 'production'
-                                ? '.atrilhadoecommerce.com.br'
-                                : hostname.includes('localhost')
-                                    ? 'localhost'
-                                    : hostname.endsWith('.lvh.me') || hostname.includes('.lvh.me:')
-                                        ? '.lvh.me'
-                                        : undefined,
+                            domain,
                             sameSite: 'lax',
-                            secure: process.env.NODE_ENV === 'production',
+                            secure: isProd,
                         })
-                    )
+                    })
                 },
             },
         }
@@ -49,14 +56,16 @@ export async function middleware(request: NextRequest) {
     // Check if accessing via 'community' or 'comunidade' subdomain
     // Compatible with local development (comunidade.localhost:3000) and production
     if (hostname.startsWith('community.') || hostname.startsWith('comunidade.')) {
-        // Rewrite to /community internal route
-        // e.g. community.domain.com/feed -> /community/feed
-        // e.g. community.domain.com/ -> /community
-
-        // Prevent rewrite loop if already rewrited (though middleware usually runs on request)
-        if (!url.pathname.startsWith('/community')) {
-            url.pathname = `/community${url.pathname}`;
-            return NextResponse.rewrite(url);
+        // Exclude specific paths from community rewrite (Auth, API, etc)
+        const excludedPaths = ['/login', '/auth', '/api', '/register', '/_next', '/favicon.ico'];
+        const isExcluded = excludedPaths.some(path => url.pathname.startsWith(path));
+        
+        if (!isExcluded) {
+            // Rewrite to /community internal route
+            if (!url.pathname.startsWith('/community')) {
+                url.pathname = `/community${url.pathname}`;
+                return NextResponse.rewrite(url);
+            }
         }
     }
 

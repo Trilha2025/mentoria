@@ -14,6 +14,7 @@ export const ProfileSettings = () => {
     // Form States
     const [name, setName] = useState('');
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const [accessType, setAccessType] = useState('COMMUNITY');
     const [uploading, setUploading] = useState(false);
 
     // Password States
@@ -38,6 +39,7 @@ export const ProfileSettings = () => {
         if (user) {
             setName(user.name || '');
             setAvatarUrl(user.avatarUrl || null);
+            setAccessType(user.accessType || 'COMMUNITY');
         }
     }, [user]);
 
@@ -110,13 +112,17 @@ export const ProfileSettings = () => {
         }
     };
 
-    const updateProfile = async (newName: string, newAvatarUrl: string | null) => {
+    const updateProfile = async (newName: string, newAvatarUrl: string | null, newAccessType?: string) => {
         setSaving(true);
         try {
             const res = await fetch('/api/profile', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: newName, avatarUrl: newAvatarUrl })
+                body: JSON.stringify({ 
+                    name: newName, 
+                    avatarUrl: newAvatarUrl,
+                    accessType: newAccessType || accessType
+                })
             });
             const data = await res.json();
             if (data.success) {
@@ -134,7 +140,7 @@ export const ProfileSettings = () => {
 
     const handleSaveProfile = async (e: React.FormEvent) => {
         e.preventDefault();
-        await updateProfile(name, avatarUrl);
+        await updateProfile(name, avatarUrl, accessType);
         alert('Perfil atualizado com sucesso!');
     };
 
@@ -251,6 +257,21 @@ export const ProfileSettings = () => {
                                 onChange={(e) => setName(e.target.value)}
                                 className="w-full p-3 bg-background border border-trenchy-border rounded-lg text-sm text-trenchy-text-primary focus:border-trenchy-orange focus:ring-1 focus:ring-trenchy-orange outline-none transition"
                             />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-trenchy-text-secondary mb-1 uppercase">Nível de Acesso (Teste)</label>
+                            <select
+                                value={accessType}
+                                onChange={(e) => setAccessType(e.target.value)}
+                                className="w-full p-3 bg-background border border-trenchy-border rounded-xl text-sm text-trenchy-text-primary focus:border-trenchy-orange focus:ring-1 focus:ring-trenchy-orange outline-none transition appearance-none"
+                            >
+                                <option value="COMMUNITY">Comunidade (Acesso Básico)</option>
+                                <option value="CONSULTING">Consultoria (Acesso Completo)</option>
+                            </select>
+                            <p className="mt-1 text-[10px] text-trenchy-text-secondary italic">
+                                * Opção liberada para teste de transição entre ambientes.
+                            </p>
                         </div>
 
                         <div>
