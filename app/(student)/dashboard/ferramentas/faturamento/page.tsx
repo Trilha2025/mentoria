@@ -67,8 +67,8 @@ export default function FaturamentoPage() {
                 .eq('userId', dbUser.id);
 
             if (connections) {
-                setMlConnected(connections.some(c => c.platform === 'MERCADOLIVRE'));
-                setShopeeConnected(connections.some(c => c.platform === 'SHOPEE'));
+                setMlConnected(connections.some((c: any) => c.platform === 'MERCADOLIVRE'));
+                setShopeeConnected(connections.some((c: any) => c.platform === 'SHOPEE'));
             }
         } catch (err) {
             console.error('Error init:', err);
