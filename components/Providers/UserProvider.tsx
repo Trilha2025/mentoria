@@ -162,7 +162,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         fetchUser();
 
         let lastEventTime = 0;
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: any, session: any) => {
             const now = Date.now();
             if (now - lastEventTime < 1000) return;
             lastEventTime = now;
