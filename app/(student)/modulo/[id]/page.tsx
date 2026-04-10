@@ -81,8 +81,8 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
                     if (fetchedLessons && fetchedLessons.length > 0) {
                         // Filter and Map Access
-                        const visibleLessons = fetchedLessons.map((lesson, idx) => {
-                            const lAcc = lessonAccesses?.find(a => a.lessonId === lesson.id);
+                        const visibleLessons = fetchedLessons.map((lesson: any, idx: number) => {
+                            const lAcc = lessonAccesses?.find((a: any) => a.lessonId === lesson.id);
                             let hasAccess = false;
 
                             if (lAcc?.status === 'UNLOCKED' || lAcc?.status === 'COMPLETED') {
@@ -117,7 +117,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
     const handleLessonComplete = (lessonId: string) => {
         // Update local state for the list
-        setLessons(prev => prev.map(l => l.id === lessonId ? { ...l, completed: true } : l));
+        setLessons(prev => prev.map((l: any) => l.id === lessonId ? { ...l, completed: true } : l));
 
         // Update active lesson state
         if (activeLesson && activeLesson.id === lessonId) {

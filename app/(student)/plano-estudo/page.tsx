@@ -65,10 +65,10 @@ export default function StudyPlanPage() {
             });
 
             if (res.ok) {
-                setStudyPlan(prev => prev.map(module => ({
+                setStudyPlan((prev: ModuleGroup[]) => prev.map((module: ModuleGroup) => ({
                     ...module,
-                    lessons: module.lessons.filter(l => l.id !== lessonId)
-                })).filter(module => module.lessons.length > 0));
+                    lessons: module.lessons.filter((l: Lesson) => l.id !== lessonId)
+                })).filter((module: ModuleGroup) => module.lessons.length > 0));
             } else {
                 const data = await res.json();
                 alert('Erro ao remover aula: ' + (data.error || 'Erro desconhecido'));
@@ -94,9 +94,9 @@ export default function StudyPlanPage() {
             });
 
             if (res.ok) {
-                setStudyPlan(prev => prev.map(module => ({
+                setStudyPlan((prev: ModuleGroup[]) => prev.map((module: ModuleGroup) => ({
                     ...module,
-                    lessons: module.lessons.map(l =>
+                    lessons: module.lessons.map((l: Lesson) =>
                         l.id === lessonId ? { ...l, completed: !currentStatus } : l
                     )
                 })));
@@ -149,7 +149,7 @@ export default function StudyPlanPage() {
                 ) : (
                     <div className="space-y-8">
                         <div className="grid gap-6">
-                            {studyPlan.map((module) => (
+                            {studyPlan.map((module: ModuleGroup) => (
                                 <div key={module.moduleId} className="bg-trenchy-card border border-trenchy-border rounded-xl overflow-hidden">
                                     <div className="px-6 py-4 bg-black/20 border-b border-trenchy-border flex items-center justify-between">
                                         <h2 className="font-bold text-lg text-trenchy-text-primary flex items-center gap-2">
@@ -162,7 +162,7 @@ export default function StudyPlanPage() {
                                     </div>
 
                                     <div className="divide-y divide-trenchy-border/50">
-                                        {module.lessons.map((lesson) => (
+                                        {module.lessons.map((lesson: Lesson) => (
                                             <div
                                                 key={lesson.id}
                                                 className={`group p-4 hover:bg-white/5 transition-colors flex items-center gap-4 ${lesson.completed ? 'opacity-50' : ''

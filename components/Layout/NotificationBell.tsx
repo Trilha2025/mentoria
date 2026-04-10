@@ -60,7 +60,7 @@ export const NotificationBell = () => {
         });
 
         // Atualiza estado local
-        setNotifications(prev => prev.map(n => ids.includes(n.id) ? { ...n, read: true } : n));
+        setNotifications((prev: Notification[]) => prev.map((n: Notification) => ids.includes(n.id) ? { ...n, read: true } : n));
         setUnreadCount(prev => Math.max(0, prev - ids.length));
     };
 
@@ -75,7 +75,7 @@ export const NotificationBell = () => {
     };
 
     const handleMarkAllRead = async () => {
-        const unreadIds = notifications.filter(n => !n.read).map(n => n.id);
+        const unreadIds = notifications.filter((n: Notification) => !n.read).map((n: Notification) => n.id);
         if (unreadIds.length > 0) {
             await handleMarkAsRead(unreadIds);
         }
@@ -89,10 +89,10 @@ export const NotificationBell = () => {
                 method: 'DELETE'
             });
 
-            setNotifications(prev => prev.filter(n => n.id !== id));
+            setNotifications((prev: Notification[]) => prev.filter((n: Notification) => n.id !== id));
             // Recalculate unread count if needed (though usually we delete read/unread)
             // If the deleted one was unread, decrement count
-            const deletedNotif = notifications.find(n => n.id === id);
+            const deletedNotif = notifications.find((n: Notification) => n.id === id);
             if (deletedNotif && !deletedNotif.read) {
                 setUnreadCount(prev => Math.max(0, prev - 1));
             }
@@ -134,7 +134,7 @@ export const NotificationBell = () => {
                             </div>
                         ) : (
                             <ul className="divide-y divide-trenchy-border">
-                                {notifications.map((notif) => (
+                                {notifications.map((notif: Notification) => (
                                     <li
                                         key={notif.id}
                                         onClick={() => handleNotificationClick(notif)}

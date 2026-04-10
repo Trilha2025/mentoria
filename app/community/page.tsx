@@ -58,7 +58,7 @@ export default async function CommunityPage() {
                             <p className="text-trenchy-text-secondary font-medium">Nenhuma publicação ainda.</p>
                         </div>
                     ) : (
-                        recentPosts.map(post => {
+                        recentPosts.map((post: any) => {
                             const postUrl = `/community/space/${post.space.slug}/post/${post.id}`;
                             const isLiked = post.likes.length > 0;
                             

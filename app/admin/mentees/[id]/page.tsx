@@ -193,18 +193,18 @@ export default function MenteeDetailsPage({ params }: { params: Promise<{ id: st
     };
 
     const getModuleStatus = (moduleId: string) => {
-        const acc = moduleAccesses.find(a => a.moduleId === moduleId);
+        const acc = moduleAccesses.find((a: any) => a.moduleId === moduleId);
         return acc ? acc.status : 'NONE';
     };
 
     const getLessonStatus = (lessonId: string) => {
-        const acc = lessonAccesses.find(a => a.lessonId === lessonId);
+        const acc = lessonAccesses.find((a: any) => a.lessonId === lessonId);
         return acc ? acc.status : 'NONE';
     };
 
     const toggleExpand = (modId: string) => {
-        setExpandedModules(prev =>
-            prev.includes(modId) ? prev.filter(id => id !== modId) : [...prev, modId]
+        setExpandedModules((prev: string[]) =>
+            prev.includes(modId) ? prev.filter((id: string) => id !== modId) : [...prev, modId]
         );
     };
 
@@ -265,7 +265,7 @@ export default function MenteeDetailsPage({ params }: { params: Promise<{ id: st
                         Progresso e Liberação Granular
                     </h2>
                     <div className="space-y-4">
-                        {modules.map(mod => {
+                        {modules.map((mod: Module) => {
                             const modStatus = getModuleStatus(mod.id);
                             const isModUnlocked = modStatus === 'UNLOCKED' || modStatus === 'COMPLETED';
                             const isExpanded = expandedModules.includes(mod.id);
@@ -298,7 +298,7 @@ export default function MenteeDetailsPage({ params }: { params: Promise<{ id: st
                                             {mod.lessons?.length === 0 ? (
                                                 <div className="p-3 text-xs text-center text-trenchy-text-secondary italic">Nenhuma aula cadastrada.</div>
                                             ) : (
-                                                mod.lessons.map(lesson => {
+                                                mod.lessons.map((lesson: Lesson) => {
                                                     const lessonStatus = getLessonStatus(lesson.id);
                                                     const isLessonUnlocked = lessonStatus === 'UNLOCKED' || lessonStatus === 'COMPLETED';
                                                     // Se a aula não tem status próprio 'NONE', ela herda do módulo
@@ -340,7 +340,7 @@ export default function MenteeDetailsPage({ params }: { params: Promise<{ id: st
                         <p className="text-trenchy-text-secondary text-center py-8">Nenhuma tarefa enviada.</p>
                     ) : (
                         <div className="space-y-4">
-                            {submissions.map(sub => (
+                            {submissions.map((sub: Submission) => (
                                 <div key={sub.id} className="p-4 border border-trenchy-border rounded-lg bg-black/5 dark:bg-white/5">
                                     <div className="flex justify-between items-start mb-2">
                                         <div className="flex flex-col gap-1">

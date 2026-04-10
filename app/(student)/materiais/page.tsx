@@ -27,7 +27,7 @@ export default function MaterialsPage() {
                 .eq('userId', user.id)
                 .in('status', ['UNLOCKED', 'COMPLETED']);
 
-            const unlockedModuleIds = accessData?.map(a => a.moduleId) || [];
+            const unlockedModuleIds = accessData?.map((a: any) => a.moduleId) || [];
 
             if (unlockedModuleIds.length === 0) {
                 setLoading(false);

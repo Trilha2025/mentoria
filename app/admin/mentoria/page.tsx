@@ -84,21 +84,21 @@ export default function AdminMentorshipPanel() {
         const sevenDays = 7 * oneDay;
 
         // 1. Stuck Users (> 7 dias sem acesso)
-        const stuckCount = students.filter(s => {
+        const stuckCount = students.filter((s: Student) => {
             if (!s.lastAccess) return true; // Nunca acessou cont como stuck? ou new? Vamos considerar stuck se criado há > 7 dias. Mas por simplificação, apenas lastAccess antigo.
             const last = new Date(s.lastAccess).getTime();
             return (now.getTime() - last) > sevenDays;
         }).length;
 
         // 2. Active Users (< 24h)
-        const activeCount = students.filter(s => {
+        const activeCount = students.filter((s: Student) => {
             if (!s.lastAccess) return false;
             const last = new Date(s.lastAccess).getTime();
             return (now.getTime() - last) < oneDay;
         }).length;
 
         // 3. Pending Reviews
-        const pendingCount = submissions.filter(s => s.status === 'PENDING').length;
+        const pendingCount = submissions.filter((s: Submission) => s.status === 'PENDING').length;
 
         setStats({ stuck: stuckCount, active: activeCount, pending: pendingCount });
     };
@@ -331,7 +331,7 @@ export default function AdminMentorshipPanel() {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-trenchy-border">
-                                            {students.map((student) => (
+                                            {students.map((student: Student) => (
                                                 <tr key={student.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                                                     <td className="p-4">
                                                         <Link href={`/admin/mentees/${student.id}`} className="block hover:bg-black/5 dark:hover:bg-white/10 p-2 -m-2 rounded transition group">
@@ -353,7 +353,7 @@ export default function AdminMentorshipPanel() {
                                                                 className="text-sm border-trenchy-border rounded shadow-sm focus:border-trenchy-orange focus:ring focus:ring-orange-200 focus:ring-opacity-50 bg-background text-trenchy-text-primary p-1"
                                                             >
                                                                 <option value="">-- Sem Mentor --</option>
-                                                                {mentors.map(m => (
+                                                                {mentors.map((m: any) => (
                                                                     <option key={m.id} value={m.id}>{m.name || 'Admin/Mentor'}</option>
                                                                 ))}
                                                             </select>
