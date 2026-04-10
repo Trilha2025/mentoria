@@ -96,8 +96,12 @@ const createClientInstance = () => {
                 fetch: async (url, options) => {
                     const urlStr = typeof url === 'string' ? url : url.toString();
                     const circuit = getGlobalCircuitState();
+                    const bodyStr = typeof options?.body === 'string' ? options.body : '';
                     
-                    if (circuit.broken && (urlStr.includes('/auth/v1/token') || urlStr.includes('/auth/v1/user'))) {
+                    // Only block if it's an automatic refresh token request
+                    if (circuit.broken && 
+                        urlStr.includes('/auth/v1/token') && 
+                        bodyStr.includes('grant_type=refresh_token')) {
                         return new Response(JSON.stringify({ 
                             error: 'rate_limit', 
                             message: 'Auth loop protection active. Please wait 30s.' 
