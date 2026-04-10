@@ -12,15 +12,18 @@ const getCookieDomain = () => {
     const hostname = window.location.hostname;
     const isProd = process.env.NODE_ENV === 'production';
     
-    if (isProd) {
-        // Match production domain exactly for sharing
-        return '.atrilhadoecommerce.com.br';
-    } else if (hostname === 'lvh.me' || hostname.endsWith('.lvh.me')) {
-        return '.lvh.me';
-    } else if (hostname === 'localhost' || hostname.endsWith('.localhost')) {
-        // For localhost, explicitly using '.localhost' is often better than undefined
-        // to ensure consistency across subdomains like community.localhost
-        return '.localhost';
+    // If it's an IP address or localhost without dots, don't set a domain
+    if (hostname === 'localhost' || /^(\d{1,3}\.){3}\d{1,3}$/.test(hostname)) {
+        return undefined;
+    }
+
+    // Dynamic root domain detection
+    const parts = hostname.split('.');
+    if (parts.length >= 2) {
+        // Handle common cases like .com.br or .net.br
+        const isTriplePart = parts.length >= 3 && ['com', 'net', 'org', 'edu', 'gov'].includes(parts[parts.length - 2]);
+        const rootParts = isTriplePart ? parts.slice(-3) : parts.slice(-2);
+        return '.' + rootParts.join('.');
     }
     
     return undefined;
