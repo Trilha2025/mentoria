@@ -4,9 +4,11 @@ const prisma = new PrismaClient();
 async function main() {
     console.log('🌱 Seeding Community Database...');
 
-    // 1. Create Groups
-    const group1 = await prisma.spaceGroup.create({
-        data: {
+    // 1. Upsert Groups
+    const group1 = await prisma.spaceGroup.upsert({
+        where: { slug: 'start-here' },
+        update: {},
+        create: {
             name: 'Comece Aqui',
             slug: 'start-here',
             emoji: '👋',
@@ -14,8 +16,10 @@ async function main() {
         }
     });
 
-    const group2 = await prisma.spaceGroup.create({
-        data: {
+    const group2 = await prisma.spaceGroup.upsert({
+        where: { slug: 'general' },
+        update: {},
+        create: {
             name: 'Geral',
             slug: 'general',
             emoji: '💬',
@@ -23,8 +27,10 @@ async function main() {
         }
     });
 
-    const group3 = await prisma.spaceGroup.create({
-        data: {
+    const group3 = await prisma.spaceGroup.upsert({
+        where: { slug: 'support-help' },
+        update: {},
+        create: {
             name: 'Suporte & Ajuda',
             slug: 'support-help',
             emoji: '🆘',
@@ -32,9 +38,11 @@ async function main() {
         }
     });
 
-    // 2. Create Spaces
-    await prisma.space.create({
-        data: {
+    // 2. Upsert Spaces
+    await prisma.space.upsert({
+        where: { slug: 'announcements' },
+        update: { groupId: group1.id },
+        create: {
             name: 'Avisos',
             slug: 'announcements',
             description: 'Novidades e atualizações da plataforma.',
@@ -44,8 +52,10 @@ async function main() {
         }
     });
 
-    await prisma.space.create({
-        data: {
+    await prisma.space.upsert({
+        where: { slug: 'introductions' },
+        update: { groupId: group1.id },
+        create: {
             name: 'Apresente-se',
             slug: 'introductions',
             description: 'Diga olá para a comunidade!',
@@ -55,8 +65,10 @@ async function main() {
         }
     });
 
-    await prisma.space.create({
-        data: {
+    await prisma.space.upsert({
+        where: { slug: 'general-chat' },
+        update: { groupId: group2.id },
+        create: {
             name: 'Bate-papo',
             slug: 'general-chat',
             description: 'Conversas aleatórias e networking.',
@@ -66,8 +78,10 @@ async function main() {
         }
     });
 
-    await prisma.space.create({
-        data: {
+    await prisma.space.upsert({
+        where: { slug: 'technical-questions' },
+        update: { groupId: group3.id },
+        create: {
             name: 'Dúvidas Técnicas',
             slug: 'technical-questions',
             description: 'Ajuda com a plataforma.',
@@ -77,8 +91,10 @@ async function main() {
         }
     });
 
-    await prisma.space.create({
-        data: {
+    await prisma.space.upsert({
+        where: { slug: 'strategies' },
+        update: { groupId: group2.id },
+        create: {
             name: 'Estratégias',
             slug: 'strategies',
             description: 'Discussão sobre estratégias de venda.',

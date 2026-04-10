@@ -2,29 +2,18 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { useEffect, useState } from 'react';
+import { useUser } from '@/components/Providers/UserProvider';
 import { useTheme } from '@/components/Providers/ThemeProvider';
 import { SunIcon, MoonIcon, ArrowRightOnRectangleIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { NotificationBell } from '@/components/Layout/NotificationBell';
 
 export const AdminHeader = () => {
     const pathname = usePathname();
-    const [role, setRole] = useState<string>('');
-    const [avatar, setAvatar] = useState<string | null>(null);
+    const { user, loading } = useUser();
     const { theme, toggleTheme } = useTheme();
 
-    useEffect(() => {
-        checkRole();
-    }, []);
-
-    const checkRole = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-            const { data } = await supabase.from('User').select('role, avatarUrl').eq('email', user.email).single();
-            setRole(data?.role || '');
-            setAvatar(data?.avatarUrl || null);
-        }
-    };
+    const role = user?.role || '';
+    const avatar = user?.avatarUrl || null;
 
     const isActive = (path: string) => pathname === path || pathname.startsWith(path);
 
@@ -67,7 +56,6 @@ export const AdminHeader = () => {
                     >
                         Suporte
                     </Link>
-                    {/* ... (Other links remain same) */}
                     {role === 'ADMIN' && (
                         <>
                             <Link
@@ -95,7 +83,7 @@ export const AdminHeader = () => {
 
             <div className="flex items-center gap-4">
                 <span className={`text-xs px-2 py-1 rounded font-bold ${role === 'ADMIN' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300'}`}>
-                    {role || '...'}
+                    {loading ? '...' : role || '...'}
                 </span>
 
                 <button

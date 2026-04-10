@@ -1,13 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
-export default function LoginPage() {
+function LoginContent() {
+    const searchParams = useSearchParams();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const errorType = searchParams.get('error');
+        if (errorType === 'session_timeout') {
+            setError('Sua sessão expirou ou é inválida. Por favor, faça login novamente.');
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         checkUser();
@@ -130,7 +139,7 @@ export default function LoginPage() {
                         />
                     </div>
 
-                    {error && <div className="p-3 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-lg text-center border border-red-200 dark:border-red-500/30">{error}</div>}
+                    {error && <div className="p-3 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-lg text-center border border-red-200 dark:border-red-500/30 font-medium">{error}</div>}
 
                     <button
                         type="submit"
@@ -146,5 +155,13 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center">Carregando...</div>}>
+            <LoginContent />
+        </Suspense>
     );
 }

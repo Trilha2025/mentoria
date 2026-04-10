@@ -27,7 +27,7 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
         console.log("Ticket ID:", ticketId);
 
         const body = await req.json();
-        console.log("Request body:", body);
+        // console.log("Request body:", body);
         const { content, attachmentUrl } = body;
 
         // Validate content

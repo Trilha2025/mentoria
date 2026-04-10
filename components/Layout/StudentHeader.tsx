@@ -2,43 +2,18 @@
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useEffect, useState } from 'react';
+import { useUser } from '@/components/Providers/UserProvider';
 import { useTheme } from '@/components/Providers/ThemeProvider';
-import { SunIcon, MoonIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'; // Adicionei Cog6ToothIcon
+import { SunIcon, MoonIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 
 export const StudentHeader = () => {
-    const [isAdminOrMentor, setIsAdminOrMentor] = useState(false);
-    const [isConsulting, setIsConsulting] = useState(false);
-    const [userName, setUserName] = useState('');
-    const [userEmail, setUserEmail] = useState('');
-    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const { user, loading } = useUser();
     const { theme, toggleTheme } = useTheme();
 
-    useEffect(() => {
-        checkPermission();
-    }, []);
-
-    const checkPermission = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-            const { data } = await supabase
-                .from('User')
-                .select('name, email, role, accessType, avatarUrl')
-                .eq('id', user.id)
-                .single();
-
-            if (data) {
-                setUserName(data.name || 'Mentorado');
-                setUserEmail(data.email || '');
-                setAvatarUrl(data.avatarUrl || null);
-                if (data.role === 'ADMIN' || data.role === 'MENTOR') {
-                    setIsAdminOrMentor(true);
-                }
-                if (data.accessType === 'CONSULTING') {
-                    setIsConsulting(true);
-                }
-            }
-        }
-    };
+    const isAdminOrMentor = user?.role === 'ADMIN' || user?.role === 'MENTOR';
+    const isConsulting = user?.accessType === 'CONSULTING';
+    const userName = user?.name || 'Mentorado';
+    const avatarUrl = user?.avatarUrl || null;
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
@@ -85,7 +60,7 @@ export const StudentHeader = () => {
                     
                     <div className="text-right hidden sm:block">
                         <p className="text-sm font-bold text-trenchy-text-primary">
-                            {userName}
+                            {loading ? '...' : userName}
                         </p>
                         <p className="text-[10px] text-trenchy-text-secondary uppercase">
                             Meu Perfil

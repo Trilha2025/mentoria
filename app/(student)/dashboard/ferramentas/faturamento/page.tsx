@@ -152,7 +152,7 @@ export default function FaturamentoPage() {
                 </div>
 
                 {/* Tabs Navigation */}
-                <div className="flex p-1 bg-black/20 rounded-xl border border-white/5 w-fit">
+                <div className="flex p-1 bg-orange-50 dark:bg-black/20 rounded-xl border border-orange-100 dark:border-white/5 w-fit shadow-sm">
                     <TabButton 
                         active={activeTab === 'GERAL'} 
                         onClick={() => setActiveTab('GERAL')}
@@ -338,17 +338,17 @@ export default function FaturamentoPage() {
     );
 }
 
-function TabButton({ active, onClick, label, icon: Icon, color = "group-hover:text-trenchy-text-primary", activeColor = "text-white" }: any) {
+function TabButton({ active, onClick, label, icon: Icon, color = "group-hover:text-trenchy-text-primary", activeColor = "text-trenchy-orange dark:text-white" }: any) {
     return (
         <button
             onClick={onClick}
             className={`flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-bold transition-all group ${
                 active 
-                ? 'bg-trenchy-card border border-white/10 text-white shadow-lg' 
-                : `text-trenchy-text-secondary hover:text-white`
+                ? 'bg-white dark:bg-trenchy-card border border-orange-200 dark:border-white/10 text-trenchy-orange dark:text-white shadow-sm' 
+                : `text-orange-900/40 dark:text-trenchy-text-secondary hover:text-trenchy-orange dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/5`
             }`}
         >
-            <Icon className={`h-4 w-4 transition-colors ${active ? activeColor : `text-gray-500 ${color}`}`} />
+            <Icon className={`h-4 w-4 transition-colors ${active ? activeColor : `text-orange-900/40 ${color}`}`} />
             {label}
         </button>
     );

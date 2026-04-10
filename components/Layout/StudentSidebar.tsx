@@ -2,9 +2,26 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { HomeIcon, DocumentDuplicateIcon, ArrowLeftOnRectangleIcon, AcademicCapIcon, ChevronDownIcon, ChevronRightIcon, ClipboardDocumentListIcon, BookOpenIcon, ChatBubbleLeftRightIcon, UserGroupIcon, CalendarDaysIcon, WrenchScrewdriverIcon, LinkIcon, CurrencyDollarIcon, PresentationChartLineIcon } from '@heroicons/react/24/outline';
+import { 
+    Home, 
+    Calendar, 
+    BarChart3, 
+    ClipboardList, 
+    Users, 
+    BookOpen, 
+    Files, 
+    Link2, 
+    GraduationCap, 
+    ChevronDown, 
+    ChevronRight, 
+    MessageCircle, 
+    LogOut,
+    Lock
+} from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useUser } from '@/components/Providers/UserProvider';
 
 interface Module {
     id: string;
@@ -21,34 +38,27 @@ interface NavItem {
 
 export const StudentSidebar = () => {
     const pathname = usePathname();
+    const { user } = useUser();
     const [modules, setModules] = useState<Module[]>([]);
     const [isModulesOpen, setIsModulesOpen] = useState(true);
-    const [loading, setLoading] = useState(true);
+    const [loadingModules, setLoadingModules] = useState(true);
 
     useEffect(() => {
-        fetchModules();
-    }, []);
+        if (user?.id) {
+            fetchModules();
+        }
+    }, [user?.id]);
 
     const fetchModules = async () => {
         try {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
-
-            const { data: dbUser } = await supabase
-                .from('User')
-                .select('id')
-                .eq('email', user.email)
-                .single();
-
-            if (!dbUser) return;
-
+            setLoadingModules(true);
             const { data: accessData } = await supabase
                 .from('UserModuleAccess')
                 .select(`
                     status,
                     module:Module(id, title, order)
                 `)
-                .eq('userId', dbUser.id)
+                .eq('userId', user!.id)
                 .order('module(order)', { ascending: true });
 
             if (accessData) {
@@ -62,7 +72,7 @@ export const StudentSidebar = () => {
         } catch (error) {
             console.error('Erro ao carregar módulos:', error);
         } finally {
-            setLoading(false);
+            setLoadingModules(false);
         }
     };
 
@@ -72,27 +82,31 @@ export const StudentSidebar = () => {
     };
 
     const navItems: NavItem[] = [
-        { name: 'Minha Trilha', href: '/dashboard', icon: HomeIcon },
-        { name: 'Agenda', href: '/agenda', icon: CalendarDaysIcon },
-        { name: 'Minhas Vendas', href: '/dashboard/ferramentas/faturamento', icon: PresentationChartLineIcon },
-        { name: 'Plano de Estudo', href: '/plano-estudo', icon: ClipboardDocumentListIcon },
-        { name: 'Comunidade', href: 'https://comunidade.atrilhadoecommerce.com.br', icon: UserGroupIcon },
-        { name: 'Cadernos', href: '/cadernos', icon: BookOpenIcon },
-        { name: 'Materiais', href: '/materiais', icon: DocumentDuplicateIcon },
-        { name: 'Integração', href: '/dashboard/integracao', icon: LinkIcon },
+        { name: 'Minha Trilha', href: '/dashboard', icon: Home },
+        { name: 'Agenda', href: '/agenda', icon: Calendar },
+        { name: 'Minhas Vendas', href: '/dashboard/ferramentas/faturamento', icon: BarChart3 },
+        { name: 'Plano de Estudo', href: '/plano-estudo', icon: ClipboardList },
+        { name: 'Comunidade', href: 'https://comunidade.atrilhadoecommerce.com.br', icon: Users },
+        { name: 'Cadernos', href: '/cadernos', icon: BookOpen },
+        { name: 'Materiais', href: '/materiais', icon: Files },
+        { name: 'Integração', href: '/dashboard/integracao', icon: Link2 },
     ];
 
     return (
-        <div className="hidden md:flex flex-col w-64 bg-trenchy-card h-screen fixed left-0 top-0 z-40 border-r border-trenchy-border transition-colors duration-300">
+        <div className="hidden md:flex flex-col w-64 h-screen fixed left-0 top-0 z-40 border-r border-trenchy-border glass transition-all duration-500">
             <div className="p-6 flex items-center justify-center">
-                <h1 className="text-lg font-bold tracking-tight text-white/90">Trilha do Ecommerce</h1>
+                <motion.h1 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-xl font-bold tracking-tighter text-trenchy-text-primary dark:bg-gradient-to-r dark:from-white dark:via-white dark:to-white/60 dark:bg-clip-text dark:text-transparent"
+                >
+                    A Trilha do Ecommerce
+                </motion.h1>
             </div>
 
-            <nav className="flex-1 px-3 space-y-1 overflow-y-auto mt-4">
+            <nav className="flex-1 px-4 space-y-1 overflow-y-auto mt-2 custom-scrollbar">
                 {navItems.map((item, index) => {
                     const isActive = pathname === item.href;
-
-                    // Insert Modules Accordion as second item
                     const renderModules = index === 0;
 
                     const renderItem = (
@@ -101,22 +115,29 @@ export const StudentSidebar = () => {
                                 <CommunityLink item={item} />
                             ) : item.children ? (
                                 <div
-                                    className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all group mb-1 text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary cursor-default`}
+                                    className="flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all group mb-1 text-trenchy-text-secondary hover:bg-white/5 hover:text-white cursor-default"
                                 >
-                                    <item.icon className="h-5 w-5 mr-3 flex-shrink-0 text-gray-400 group-hover:text-trenchy-text-primary" />
+                                    <item.icon className="h-4 w-4 mr-3 flex-shrink-0 text-trenchy-text-secondary group-hover:text-trenchy-text-primary dark:group-hover:text-white transition-colors" strokeWidth={1.5} />
                                     {item.name}
-                                    <ChevronDownIcon className={`ml-auto h-4 w-4 transition-transform ${item.children.some(c => pathname === c.href) ? '' : '-rotate-90'}`} />
+                                    <ChevronDown className={`ml-auto h-4 w-4 transition-transform ${item.children.some(c => pathname === c.href) ? '' : '-rotate-90'}`} />
                                 </div>
                             ) : (
                                 <Link
                                     href={item.href}
-                                    className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all group mb-1 ${isActive
-                                        ? 'bg-trenchy-orange text-white shadow-lg shadow-orange-900/20'
-                                        : 'text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary'
+                                    className={`relative flex items-center px-3.5 py-2.5 text-sm font-medium rounded-2xl transition-all group mb-1 ${isActive
+                                        ? 'bg-trenchy-orange/15 text-trenchy-orange font-bold'
+                                        : 'text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary dark:hover:text-white'
                                         }`}
                                 >
-                                    <item.icon className={`h-5 w-5 mr-3 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-trenchy-text-primary'
-                                        }`} />
+                                    {isActive && (
+                                        <motion.div 
+                                            layoutId="active-indicator"
+                                            className="absolute left-0 w-1 md:dark:w-1 md:w-[4px] h-6 bg-trenchy-orange rounded-r-full"
+                                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                        />
+                                    )}
+                                    <item.icon className={`h-4 w-4 mr-3 flex-shrink-0 transition-colors ${isActive ? 'text-trenchy-orange' : 'text-trenchy-text-secondary group-hover:text-trenchy-text-primary dark:group-hover:text-white'
+                                        }`} strokeWidth={1.5} />
                                     {item.name}
                                 </Link>
                             )}
@@ -129,9 +150,9 @@ export const StudentSidebar = () => {
                                             <Link
                                                 key={child.name}
                                                 href={child.href}
-                                                className={`block px-3 py-2 text-xs rounded-lg transition-all ${isChildActive
+                                                className={`block px-3 py-2 text-xs rounded-xl transition-all ${isChildActive
                                                     ? 'text-trenchy-orange font-bold bg-trenchy-orange/10'
-                                                    : 'text-trenchy-text-secondary hover:text-trenchy-text-primary hover:bg-white/5'
+                                                    : 'text-trenchy-text-secondary hover:text-trenchy-text-primary dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
                                                     }`}
                                             >
                                                 {child.name}
@@ -150,60 +171,68 @@ export const StudentSidebar = () => {
                                 <div className="mt-4">
                                     <button
                                         onClick={() => setIsModulesOpen(!isModulesOpen)}
-                                        className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary rounded-xl transition-all group mb-2"
+                                        className="flex items-center justify-between w-full px-3.5 py-2.5 text-sm font-medium text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary dark:hover:text-white rounded-2xl transition-all group mb-2"
                                     >
                                         <div className="flex items-center">
-                                            <AcademicCapIcon className="h-5 w-5 mr-3 flex-shrink-0 text-gray-400 group-hover:text-trenchy-text-primary" />
+                                            <GraduationCap className="h-4 w-4 mr-3 flex-shrink-0 text-trenchy-text-secondary group-hover:text-trenchy-text-primary dark:group-hover:text-white transition-colors" strokeWidth={1.5} />
                                             Módulos
                                         </div>
-                                        {isModulesOpen ? (
-                                            <ChevronDownIcon className="h-4 w-4" />
-                                        ) : (
-                                            <ChevronRightIcon className="h-4 w-4" />
-                                        )}
+                                        <motion.div
+                                            animate={{ rotate: isModulesOpen ? 0 : -90 }}
+                                            transition={{ duration: 0.2 }}
+                                        >
+                                            <ChevronDown className="h-4 w-4" />
+                                        </motion.div>
                                     </button>
 
-                                    {isModulesOpen && (
-                                        <div className="ml-4 space-y-1 mt-1 transition-all duration-300">
-                                            {loading ? (
-                                                <div className="px-4 py-2 text-xs text-trenchy-text-secondary">
-                                                    Carregando...
-                                                </div>
-                                            ) : modules.length === 0 ? (
-                                                <div className="px-4 py-2 text-xs text-trenchy-text-secondary">
-                                                    Nenhum módulo disponível
-                                                </div>
-                                            ) : (
-                                                modules.map((module) => {
-                                                    const isModuleActive = pathname.includes(module.id);
-                                                    const isLocked = module.status === 'LOCKED';
-                                                    const isCompleted = module.status === 'COMPLETED';
+                                    <AnimatePresence>
+                                        {isModulesOpen && (
+                                            <motion.div 
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                className="ml-4 space-y-1 mt-1 overflow-hidden"
+                                            >
+                                                {loadingModules ? (
+                                                    <div className="px-4 py-2 text-xs text-trenchy-text-secondary italic">
+                                                        Carregando...
+                                                    </div>
+                                                ) : modules.length === 0 ? (
+                                                    <div className="px-4 py-2 text-xs text-trenchy-text-secondary">
+                                                        Nenhum módulo disponível
+                                                    </div>
+                                                ) : (
+                                                    modules.map((module) => {
+                                                        const isModuleActive = pathname.includes(module.id);
+                                                        const isLocked = module.status === 'LOCKED';
+                                                        const isCompleted = module.status === 'COMPLETED';
 
-                                                    return (
-                                                        <Link
-                                                            key={module.id}
-                                                            href={isLocked ? '#' : `/modulo/${module.id}`}
-                                                            className={`flex items-center justify-between px-4 py-2 text-xs rounded-lg transition-all ${isModuleActive
-                                                                ? 'bg-trenchy-orange/10 text-trenchy-orange font-bold'
-                                                                : isLocked
-                                                                    ? 'text-gray-500 cursor-not-allowed opacity-50'
-                                                                    : 'text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary'
-                                                                }`}
-                                                            onClick={(e) => isLocked && e.preventDefault()}
-                                                        >
-                                                            <span className="truncate">{module.title}</span>
-                                                            {isCompleted && (
-                                                                <span className="text-green-500 text-xs ml-2">✓</span>
-                                                            )}
-                                                            {isLocked && (
-                                                                <span className="text-xs ml-2">🔒</span>
-                                                            )}
-                                                        </Link>
-                                                    );
-                                                })
-                                            )}
-                                        </div>
-                                    )}
+                                                        return (
+                                                            <Link
+                                                                key={module.id}
+                                                                href={isLocked ? '#' : `/modulo/${module.id}`}
+                                                                className={`flex items-center justify-between px-4 py-2 text-xs rounded-xl transition-all ${isModuleActive
+                                                                    ? 'bg-trenchy-orange/10 text-trenchy-orange font-bold'
+                                                                    : isLocked
+                                                                        ? 'text-white/20 cursor-not-allowed'
+                                                                        : 'text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary dark:hover:text-white'
+                                                                    }`}
+                                                                onClick={(e) => isLocked && e.preventDefault()}
+                                                            >
+                                                                <span className="truncate">{module.title}</span>
+                                                                {isCompleted && (
+                                                                    <span className="text-green-500 text-[10px] ml-2">●</span>
+                                                                )}
+                                                                {isLocked && (
+                                                                    <Lock className="h-3 w-3 text-white/20 ml-2" />
+                                                                )}
+                                                            </Link>
+                                                        );
+                                                    })
+                                                )}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
                             </div>
                         );
@@ -213,29 +242,36 @@ export const StudentSidebar = () => {
                 })}
             </nav>
 
-            <div className="p-4 space-y-2">
+            <div className="p-5 space-y-1.5 mt-auto">
                 <Link
                     href="/dashboard/support"
-                    className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-xl transition-all group ${pathname.includes('/dashboard/support')
-                        ? 'bg-trenchy-orange text-white shadow-lg shadow-orange-900/20'
-                        : 'text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary'
+                    className={`relative flex items-center w-full px-3.5 py-2.5 text-sm font-medium rounded-2xl transition-all group ${pathname.includes('/dashboard/support')
+                        ? 'bg-trenchy-orange/15 text-trenchy-orange font-bold'
+                        : 'text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary dark:hover:text-white'
                         }`}
                 >
-                    <ChatBubbleLeftRightIcon className={`h-5 w-5 mr-3 flex-shrink-0 ${pathname.includes('/dashboard/support') ? 'text-white' : 'text-gray-400 group-hover:text-trenchy-text-primary'}`} />
+                    {pathname.includes('/dashboard/support') && (
+                        <motion.div 
+                            layoutId="active-indicator"
+                            className="absolute left-0 w-1 md:dark:w-1 md:w-[4px] h-6 bg-trenchy-orange rounded-r-full"
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        />
+                    )}
+                    <MessageCircle className={`h-4 w-4 mr-3 flex-shrink-0 transition-colors ${pathname.includes('/dashboard/support') ? 'text-trenchy-orange' : 'text-trenchy-text-secondary group-hover:text-trenchy-text-primary dark:group-hover:text-white'}`} strokeWidth={1.5} />
                     Suporte
                 </Link>
 
                 <button
                     onClick={handleLogout}
-                    className="flex items-center w-full px-4 py-3 text-sm font-medium text-trenchy-text-secondary rounded-xl hover:bg-red-500/10 hover:text-red-400 transition-colors"
+                    className="flex items-center w-full px-3.5 py-2.5 text-sm font-medium text-trenchy-text-secondary rounded-2xl hover:bg-red-500/10 hover:text-red-400 transition-all group"
                 >
-                    <ArrowLeftOnRectangleIcon className="h-5 w-5 mr-3" />
+                    <LogOut className="h-4 w-4 mr-3 transition-transform group-hover:-translate-x-1" strokeWidth={1.5} />
                     Sair
                 </button>
 
-                <div className="pt-4 border-t border-trenchy-border mt-4 text-center">
-                    <p className="text-[10px] text-trenchy-text-secondary font-medium tracking-tight">A Trilha do Ecommerce</p>
-                    <p className="text-[10px] text-trenchy-text-secondary opacity-50">&copy; 2026 - Todos os direitos reservados</p>
+                <div className="pt-6 border-t border-trenchy-border mt-4 text-center">
+                    <p className="text-[10px] text-trenchy-text-secondary font-semibold uppercase tracking-widest opacity-40">A Trilha do Ecommerce</p>
+                    <p className="text-[9px] text-trenchy-text-secondary opacity-30 mt-1">&copy; 2026 - Premium Experience</p>
                 </div>
             </div>
         </div>
@@ -279,10 +315,11 @@ function CommunityLink({ item }: { item: any }) {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all group mb-2 text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary"
+            className="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-2xl transition-all group mb-2 text-trenchy-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-trenchy-text-primary dark:hover:text-white"
         >
-            <item.icon className="h-5 w-5 mr-3 flex-shrink-0 text-gray-400 group-hover:text-trenchy-text-primary" />
+            <item.icon className="h-4 w-4 mr-3 flex-shrink-0 text-trenchy-text-secondary group-hover:text-trenchy-text-primary dark:group-hover:text-white transition-colors" strokeWidth={1.5} />
             {item.name}
         </a>
     );
 }
+

@@ -154,7 +154,7 @@ export const LessonPlayer = ({ lesson, onComplete, moduleId }: LessonPlayerProps
     };
 
     return (
-        <div className="bg-black/20 rounded-xl overflow-hidden border border-trenchy-border">
+        <div className="bg-black rounded-xl overflow-hidden border border-trenchy-border shadow-2xl">
             {/* Video Area */}
             <div className="aspect-video bg-black relative flex items-center justify-center group">
                 {lesson.videoUrl ? (
@@ -174,11 +174,11 @@ export const LessonPlayer = ({ lesson, onComplete, moduleId }: LessonPlayerProps
             </div>
 
             {/* Controls */}
-            <div className="p-6 flex items-center justify-between">
+            <div className="p-6 flex items-center justify-between bg-black">
                 <div>
-                    <h2 className="text-xl font-bold text-trenchy-text-primary mb-1">{lesson.title}</h2>
-                    <p className="text-sm text-trenchy-text-secondary">
-                        {completed ? 'Aula concluída' : 'Assista para avançar'}
+                    <h2 className="text-xl font-bold text-white mb-1 tracking-tight">{lesson.title}</h2>
+                    <p className="text-sm text-trenchy-orange font-medium">
+                        {completed ? 'Aula concluída ✅' : 'Assista para avançar'}
                     </p>
                 </div>
 
@@ -189,8 +189,8 @@ export const LessonPlayer = ({ lesson, onComplete, moduleId }: LessonPlayerProps
                             onClick={handleToggleStudyPlan}
                             disabled={addingToStudyPlan}
                             className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-bold transition-all ${inStudyPlan
-                                ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20 hover:bg-blue-500/20'
-                                : 'bg-gray-500/10 text-gray-500 border border-gray-500/20 hover:bg-gray-500/20'
+                                ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30'
+                                : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 hover:text-white'
                                 }`}
                             title={inStudyPlan ? 'Remover do Plano de Estudo' : 'Adicionar ao Plano de Estudo'}
                         >

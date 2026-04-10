@@ -40,6 +40,11 @@ model User {
   posts          Post[]
   comments       Comment[]
   likes          Like[]
+  commentLikes   CommentLike[]
+  favorites      Favorite[]
+  
+  following      Follow[]             @relation("Following")
+  followers      Follow[]             @relation("Followers")
   
   communityMember CommunityMember?
   platformConnections PlatformConnection[]
@@ -356,6 +361,9 @@ model Post {
   content     String   @db.Text
   isPinned    Boolean  @default(false)
   
+  mediaUrls   String[] @default([])
+  mediaType   String?  // IMAGE, GIF, VIDEO (if needed later)
+  
   spaceId     String
   space       Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 
@@ -364,7 +372,17 @@ model Post {
 
   comments    Comment[]
   likes       Like[]
+  favorites   Favorite[]
 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EventGalleryImage {
+  id          String   @id @default(cuid())
+  imageUrl    String
+  caption     String?
+  order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -383,8 +401,20 @@ model Comment {
   parent      Comment? @relation("CommentReplies", fields: [parentId], references: [id])
   replies     Comment[] @relation("CommentReplies")
 
+  likes       CommentLike[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model CommentLike {
+  id        String   @id @default(cuid())
+  commentId String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([commentId, userId])
 }
 
 model Like {
@@ -395,4 +425,28 @@ model Like {
   user      User     @relation(fields: [userId], references: [id])
 
   @@unique([postId, userId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  follower    User     @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User     @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
 }

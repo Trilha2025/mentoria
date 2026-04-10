@@ -1,25 +1,22 @@
-'use client';
-
+import { prisma } from '@/lib/prisma';
+import { EventGallery } from '@/components/Agenda/EventGallery';
 import { PlannerCalendar } from '@/components/Planner/PlannerCalendar';
 import { CalendarDaysIcon } from '@heroicons/react/24/outline';
-import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
-function AgendaContent() {
-    const searchParams = useSearchParams();
-    const lessonId = searchParams.get('lessonId');
-    const title = searchParams.get('title');
+// This is now a Server Component
+export default async function AgendaPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+    const params = await searchParams;
+    const lessonId = params.lessonId as string | undefined;
+    const title = params.title as string | undefined;
 
     const prefilledEvent = lessonId && title ? { title, lessonId } : null;
 
-    return (
-        <div className="animate-in fade-in duration-300">
-            <PlannerCalendar prefilledEvent={prefilledEvent} />
-        </div>
-    );
-}
+    // Fetch images on the server
+    const galleryImages = await prisma.eventGalleryImage.findMany({
+        orderBy: { order: 'asc' }
+    });
 
-export default function AgendaPage() {
     return (
         <main className="max-w-7xl mx-auto p-6 md:p-8 w-full min-h-screen">
             <div className="mb-8">
@@ -32,9 +29,15 @@ export default function AgendaPage() {
                 </p>
             </div>
 
-            <Suspense fallback={<div className="animate-pulse bg-trenchy-card h-[500px] rounded-xl border border-trenchy-border"></div>}>
-                <AgendaContent />
-            </Suspense>
+            <div className="space-y-12">
+                {/* Event Highlights Section */}
+                <EventGallery images={galleryImages} />
+
+                {/* Calendar Section */}
+                <Suspense fallback={<div className="animate-pulse bg-trenchy-card h-[600px] rounded-2xl border border-white/5 shadow-xl"></div>}>
+                    <PlannerCalendar prefilledEvent={prefilledEvent} />
+                </Suspense>
+            </div>
         </main>
     );
 }

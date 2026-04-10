@@ -2,42 +2,44 @@
 
 @variant dark (&:where(.dark, .dark *));
 
-/* Default (Dark Mode - Trenchy) */
+/* Modern Premium Theme */
 :root {
-  --background: #19252A;
+  --background: #121212;
   --foreground: #ffffff;
 
-  --trenchy-bg: #19252A;
-  --trenchy-card: #273337;
+  --trenchy-bg: #121212;
+  --trenchy-card: #1C1C1C;
   --trenchy-orange: #FF6B00;
-  --trenchy-silver: #DDE8EE;
+  --trenchy-silver: #A1A1AA; /* zinc-400 */
 
   --trenchy-text-primary: #ffffff;
-  --trenchy-text-secondary: #DDE8EE;
+  --trenchy-text-secondary: #A1A1AA;
   --trenchy-border: rgba(255, 255, 255, 0.05);
 
-  --font-geist-sans: "Inter", sans-serif;
+  --font-geist-sans: "Inter", "Geist Sans", sans-serif;
   --font-geist-mono: "monospace";
+
+  --glass-bg: rgba(28, 28, 28, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
-/* Light Mode Overrides */
+/* Light Mode Overrides - Premium White */
 :root:has(.light),
 .light {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FAFAFA;
+  --foreground: #1A1A1A;
 
-  --trenchy-bg: #f9fafb;
-  --trenchy-card: #ffffff;
-  --trenchy-orange: #ea580c;
-  /* orange-600 */
-  --trenchy-silver: #4b5563;
-  /* gray-600 */
+  --trenchy-bg: #FAFAFA;
+  --trenchy-card: #FFFFFF;
+  --trenchy-orange: #FF6B00;
+  --trenchy-silver: #71717A; /* zinc-500 */
 
-  --trenchy-text-primary: #111827;
-  /* gray-900 */
-  --trenchy-text-secondary: #6b7280;
-  /* gray-500 */
-  --trenchy-border: rgba(0, 0, 0, 0.1);
+  --trenchy-text-primary: #1A1A1A;
+  --trenchy-text-secondary: #71717A;
+  --trenchy-border: #F1F1F1;
+
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.05);
 }
 
 @theme inline {
@@ -57,16 +59,55 @@
   --color-trenchy-border: var(--trenchy-border);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
+@layer utilities {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .light-card-shadow {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  }
+
+  .orange-button-glow {
+    box-shadow: 0 4px 14px 0 rgba(255, 107, 0, 0.39);
+  }
+
+  .orange-glow {
+    box-shadow: 0 0 20px rgba(255, 107, 0, 0.15);
+  }
+
+  .orange-glow-hover:hover {
+    box-shadow: 0 0 25px rgba(255, 107, 0, 0.25);
+  }
 }
 
-/* Custom Scrollbar */
+body {
+  background: radial-gradient(circle at center, #1A1A1A 0%, #121212 100%);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans);
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+.light body {
+  background: #FAFAFA;
+}
+
+/* Custom Scrollbar - Refined */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -76,8 +117,7 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: var(--trenchy-silver);
   border-radius: 20px;
-  border: 3px solid transparent;
-  background-clip: content-box;
+  opacity: 0.5;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {

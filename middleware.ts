@@ -29,11 +29,13 @@ export async function middleware(request: NextRequest) {
                         
                         // Domain sharing logic
                         let domain = undefined;
+                        const hostOnly = hostname.split(':')[0];
+                        
                         if (isProd) {
                             domain = '.atrilhadoecommerce.com.br';
-                        } else if (hostname.endsWith('.lvh.me') || hostname.includes('.lvh.me:')) {
+                        } else if (hostOnly === 'lvh.me' || hostOnly.endsWith('.lvh.me')) {
                             domain = '.lvh.me';
-                        } else if (hostname.includes('localhost')) {
+                        } else if (hostOnly === 'localhost' || hostOnly.endsWith('.localhost')) {
                             domain = '.localhost';
                         }
 

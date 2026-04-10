@@ -16,8 +16,8 @@ export const AdminStats = ({ newStudentsCount, totalRevenue, activeModulesCount,
             <div className="bg-trenchy-card border border-trenchy-border rounded-xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                     <p className="text-xs font-bold text-trenchy-text-secondary uppercase tracking-wide">Novos Alunos (30d)</p>
-                    <div className="bg-blue-100 dark:bg-blue-900/20 p-2 rounded-lg">
-                        <UserGroupIcon className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <div className="bg-zinc-100 dark:bg-zinc-800/40 p-2 rounded-lg">
+                        <UserGroupIcon className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
                     </div>
                 </div>
                 <div className="flex items-baseline gap-2">
@@ -33,8 +33,8 @@ export const AdminStats = ({ newStudentsCount, totalRevenue, activeModulesCount,
             <div className="bg-trenchy-card border border-trenchy-border rounded-xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                     <p className="text-xs font-bold text-trenchy-text-secondary uppercase tracking-wide">Receita Declarada</p>
-                    <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-lg">
-                        <CurrencyDollarIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    <div className="bg-zinc-100 dark:bg-zinc-800/40 p-2 rounded-lg">
+                        <CurrencyDollarIcon className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
                     </div>
                 </div>
                 <div className="flex items-baseline gap-2">
@@ -46,8 +46,8 @@ export const AdminStats = ({ newStudentsCount, totalRevenue, activeModulesCount,
             <div className="bg-trenchy-card border border-trenchy-border rounded-xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                     <p className="text-xs font-bold text-trenchy-text-secondary uppercase tracking-wide">Módulos Publicados</p>
-                    <div className="bg-purple-100 dark:bg-purple-900/20 p-2 rounded-lg">
-                        <BookOpenIcon className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                    <div className="bg-zinc-100 dark:bg-zinc-800/40 p-2 rounded-lg">
+                        <BookOpenIcon className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
                     </div>
                 </div>
                 <div className="flex items-baseline gap-2">
@@ -60,7 +60,7 @@ export const AdminStats = ({ newStudentsCount, totalRevenue, activeModulesCount,
             <div className="bg-trenchy-card border border-trenchy-border rounded-xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                     <p className="text-xs font-bold text-trenchy-text-secondary uppercase tracking-wide">Engajamento Semanal</p>
-                    <div className="bg-orange-100 dark:bg-orange-900/20 p-2 rounded-lg">
+                    <div className="bg-orange-50 dark:bg-orange-900/20 p-2 rounded-lg">
                         <ArrowTrendingUpIcon className="h-4 w-4 text-trenchy-orange" />
                     </div>
                 </div>

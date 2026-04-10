@@ -288,9 +288,9 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     <div className="flex-1 flex flex-col min-h-0">
                         {activeTab === 'content' ? (
                             <div className="bg-trenchy-card rounded-2xl border border-trenchy-border overflow-hidden shadow-lg sticky top-6">
-                                <div className="p-4 border-b border-trenchy-border bg-black/20 flex items-center gap-2">
+                                <div className="p-4 border-b border-trenchy-border bg-black flex items-center gap-2">
                                     <Bars3Icon className="h-5 w-5 text-trenchy-orange" />
-                                    <h3 className="font-bold text-trenchy-text-primary text-sm uppercase tracking-wide">Conteúdo do Módulo</h3>
+                                    <h3 className="font-bold text-trenchy-orange text-sm uppercase tracking-wide">Conteúdo do Módulo</h3>
                                 </div>
                                 <div className="max-h-[70vh] overflow-y-auto custom-scrollbar">
                                     {lessons.map((lesson, idx) => {

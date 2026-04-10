@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+// Force reload after schema update: v2
 
 const globalForPrisma = global as unknown as { prisma?: PrismaClient };
 
@@ -9,13 +10,17 @@ const checkStale = () => {
 
     const missingUserAccess = !('userLessonAccess' in p);
     const missingLessonNote = !('lessonNote' in p);
-    const missingSubmissionLessonId = p.documentSubmission && !p.documentSubmission.fields?.lessonId;
+    const missingEventGallery = !('eventGalleryImage' in p);
+    const missingFavorite = !('favorite' in p);
+    const missingCommentLike = !('commentLike' in p);
 
-    if (missingUserAccess || missingLessonNote || missingSubmissionLessonId) {
+    if (missingUserAccess || missingLessonNote || missingEventGallery || missingFavorite || missingCommentLike) {
         console.log('🔄 [Prisma] Cliente desatualizado detectado:', {
             missingUserAccess,
             missingLessonNote,
-            missingSubmissionLessonId
+            missingEventGallery,
+            missingFavorite,
+            missingCommentLike
         });
         return true;
     }
