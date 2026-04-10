@@ -33,6 +33,21 @@ const getGlobalCircuitState = () => {
     const g = window as any;
     if (!g.__supabase_circuit_breaker) {
         g.__supabase_circuit_breaker = { broken: false, timer: null };
+        
+        // Listen for changes from other tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'supabase-circuit-broken') {
+                g.__supabase_circuit_breaker.broken = e.newValue === 'true';
+                if (g.__supabase_circuit_breaker.broken) {
+                    // If broken in another tab, set local timer to reset
+                    if (g.__supabase_circuit_breaker.timer) clearTimeout(g.__supabase_circuit_breaker.timer);
+                    g.__supabase_circuit_breaker.timer = setTimeout(() => {
+                        g.__supabase_circuit_breaker.broken = false;
+                        localStorage.removeItem('supabase-circuit-broken');
+                    }, 30000); // 30 second quiet period
+                }
+            }
+        });
     }
     return g.__supabase_circuit_breaker;
 };
@@ -40,10 +55,18 @@ const getGlobalCircuitState = () => {
 const breakCircuit = () => {
     const state = getGlobalCircuitState();
     state.broken = true;
+    
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('supabase-circuit-broken', 'true');
+    }
+
     if (state.timer) clearTimeout(state.timer);
     state.timer = setTimeout(() => {
         state.broken = false;
-    }, 10000); // 10 second quiet period
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('supabase-circuit-broken');
+        }
+    }, 30000); // Increased to 30 second quiet period
 };
 
 // Use a global variable to persist the Supabase client across HMR reloads in development
@@ -102,10 +125,17 @@ const createClientInstance = () => {
                                 breakCircuit();
                                 
                                 if (typeof window !== 'undefined') {
+                                    // Clear all Supabase related storage
                                     const projectRef = supabaseUrl.split('//')[1].split('.')[0];
-                                    const storageKey = `sb-${projectRef}-auth-token`;
-                                    localStorage.removeItem(storageKey);
-                                    localStorage.removeItem('supabase.auth.token');
+                                    const keys = [
+                                        `sb-${projectRef}-auth-token`,
+                                        `sb-${projectRef}-auth-token-code-verifier`,
+                                        'supabase.auth.token'
+                                    ];
+                                    keys.forEach(k => localStorage.removeItem(k));
+                                    
+                                    // Optionally dispatch a custom event for the UI to react
+                                    window.dispatchEvent(new CustomEvent('supabase-auth-corruption'));
                                 }
                             }
                         } catch (e) {
@@ -150,5 +180,18 @@ supabase.auth.getUser = async (token?: string) => {
         return await originalGetUser(token);
     } catch (e) {
         return { data: { user: null }, error: e as any };
+    }
+};
+
+// Kill the background refresh loop if the circuit is broken
+const originalRefreshSession = supabase.auth.refreshSession.bind(supabase.auth);
+supabase.auth.refreshSession = async (refreshToken?: string) => {
+    if (getGlobalCircuitState().broken) {
+        return { data: { session: null, user: null }, error: null };
+    }
+    try {
+        return await originalRefreshSession(refreshToken);
+    } catch (e) {
+        return { data: { session: null, user: null }, error: e as any };
     }
 };

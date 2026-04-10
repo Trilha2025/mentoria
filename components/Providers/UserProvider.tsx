@@ -48,21 +48,21 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         if (now - lastAuthErrorTime < 8000) return; 
         lastAuthErrorTime = now;
 
-        console.warn('[UserProvider] CRITICAL: Auth corruption detected. Clearing all storage.');
+        console.error('[UserProvider] CRITICAL: Auth corruption detected. Executing Nuclear Logout.');
         
-        try {
-            await supabase.auth.signOut();
-        } catch (e) {
-            // Ignore signout errors
-        } finally {
-            if (typeof window !== 'undefined') {
-                localStorage.clear();
-                sessionStorage.clear();
-                
-                if (window.location.pathname !== '/login') {
-                    window.location.href = '/login?error=session_timeout';
-                }
-            }
+        if (typeof window !== 'undefined') {
+            try {
+                // Nuclear Option 1: Stop the browser from making any more requests
+                window.stop();
+            } catch (e) {}
+
+            // Nuclear Option 2: Clear every piece of storage we can find
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Nuclear Option 3: Force a hard reload to /login to kill any background state/workers
+            // We use .replace() so they can't go 'back' into the loop
+            window.location.replace('/login?error=session_timeout');
         }
     };
 
@@ -182,8 +182,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             }
         });
 
+        // Listen for the custom corruption event from lib/supabase.ts
+        const handleCorruption = () => {
+            forceLogout();
+        };
+        window.addEventListener('supabase-auth-corruption', handleCorruption);
+
         return () => {
             subscription.unsubscribe();
+            window.removeEventListener('supabase-auth-corruption', handleCorruption);
         };
     }, []);
 
