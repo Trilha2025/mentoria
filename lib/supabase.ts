@@ -161,42 +161,5 @@ if (process.env.NODE_ENV !== 'production') {
     globalForSupabase.supabase = supabase;
 }
 
-// Hard Lock: Override getSession and getUser to stop internal retries during a noise storm
-const originalGetSession = supabase.auth.getSession.bind(supabase.auth);
-const originalGetUser = supabase.auth.getUser.bind(supabase.auth);
-
-supabase.auth.getSession = async () => {
-    if (getGlobalCircuitState().broken) {
-        return { data: { session: null }, error: null };
-    }
-    try {
-        return await originalGetSession();
-    } catch (e) {
-        return { data: { session: null }, error: e as any };
-    }
-};
-
-supabase.auth.getUser = async (token?: string) => {
-    // Only block if no explicit token is provided (standard check)
-    if (!token && getGlobalCircuitState().broken) {
-        return { data: { user: null }, error: null };
-    }
-    try {
-        return await originalGetUser(token);
-    } catch (e) {
-        return { data: { user: null }, error: e as any };
-    }
-};
-
-// Kill the background refresh loop if the circuit is broken
-const originalRefreshSession = supabase.auth.refreshSession.bind(supabase.auth);
-supabase.auth.refreshSession = async (refreshToken?: string) => {
-    if (getGlobalCircuitState().broken) {
-        return { data: { session: null, user: null }, error: null };
-    }
-    try {
-        return await originalRefreshSession(refreshToken);
-    } catch (e) {
-        return { data: { session: null, user: null }, error: e as any };
-    }
-};
+// O cliente Supabase agora confia no interceptor de fetch acima para gerenciar os bloqueios.
+// Removendo overrides manuais que poderiam travar o estado local do usuário.
