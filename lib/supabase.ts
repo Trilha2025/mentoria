@@ -81,7 +81,8 @@ const createClientInstance = () => {
         {
             auth: {
                 persistSession: true,
-                autoRefreshToken: true,
+                persistSession: true,
+                autoRefreshToken: !getGlobalCircuitState().broken,
                 detectSessionInUrl: true,
                 flowType: 'pkce'
             },
@@ -96,10 +97,10 @@ const createClientInstance = () => {
                     const urlStr = typeof url === 'string' ? url : url.toString();
                     const circuit = getGlobalCircuitState();
                     
-                    if (circuit.broken && urlStr.includes('/auth/v1/token')) {
+                    if (circuit.broken && (urlStr.includes('/auth/v1/token') || urlStr.includes('/auth/v1/user'))) {
                         return new Response(JSON.stringify({ 
                             error: 'rate_limit', 
-                            message: 'Auth loop protection active.' 
+                            message: 'Auth loop protection active. Please wait 30s.' 
                         }), { 
                             status: 429,
                             headers: { 'Content-Type': 'application/json' }
